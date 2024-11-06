@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Avatr</string>
+    <string name="stable_diffusion_runway_ml">Stable Diffusion  - Runway ML</string>
+    <string name="waifu_diffusion_hakurei">Waifu Diffusion - Hakurei</string>
+    <string name="get_started">Get Started</string>
+    <string name="lets_go">Let\'s Go!</string>
+    <string name="no_generated_image">Your AI Art Has Not Been \nGenerated Yet…</string>
+    <string name="home_screen_header">Bring Your AI Art Ideas \nto Life</string>
+    <string name="describe_your_ai_masterpiece">Describe your AI masterpiece...</string>
+    <string name="advanced_options">Advanced Options</string>
+    <string name="i_dont_wanna_see">I don\'t wanna see...</string>
+</resources>
