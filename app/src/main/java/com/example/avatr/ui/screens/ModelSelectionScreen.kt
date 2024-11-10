@@ -38,7 +38,9 @@ fun ModelSelectionScreen(model1: Int, model2: Int, modifier : Modifier = Modifie
 
 
     Column (
-        modifier  = Modifier.fillMaxSize().padding( 16.dp),
+        modifier  = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.large_padding)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ){
@@ -52,11 +54,11 @@ fun ModelSelectionScreen(model1: Int, model2: Int, modifier : Modifier = Modifie
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding)),
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = "Select AI Model", style = MaterialTheme.typography.displayLarge)
+                Text(text = "Select AI Model", style = MaterialTheme.typography.displayMedium)
                 Text(
                     text = "Select an AI image generation model to continue, you \ncan always change this in preferences.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xff494d5a)
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
             Column(
@@ -85,10 +87,10 @@ private fun ModelOption1(model: Int, isSelected: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .border(width = 2.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+            .border(width = 1.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
             .width(dimensionResource(id = R.dimen.button_width))
             .height(dimensionResource(id = R.dimen.button_height)),
-        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary, contentColor = MaterialTheme.colorScheme.primary)
     ) {
         Row(
             modifier = Modifier
@@ -107,7 +109,7 @@ private fun ModelOption1(model: Int, isSelected: Boolean, onClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -120,7 +122,7 @@ private fun ModelOption2(model: Int, isSelected: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .border(2.dp, Color(0xffdfe0e0), shape = RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
             .width(dimensionResource(id = R.dimen.button_width))
             .height(dimensionResource(id = R.dimen.button_height)),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
@@ -142,7 +144,7 @@ private fun ModelOption2(model: Int, isSelected: Boolean, onClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = Color.Black
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

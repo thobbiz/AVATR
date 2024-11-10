@@ -2,10 +2,15 @@ package com.example.avatr.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val light_primary = Color.White
+val light_onPrimary = Color.Black
+val light_border = Color(0xffdfe0e0)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val dark_primary = Color.Black
+val dark_onPrimary = Color.White
+val dark_border = Color(0xff494d5a)
+
+
+val secondary = Color(0xffdfe0e0)
+val light_tertiary = Color(0xff494d5a)
+val dark_tertiary = Color(0xffb1b7bc)

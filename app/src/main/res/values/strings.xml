@@ -9,4 +9,7 @@
     <string name="describe_your_ai_masterpiece">Describe your AI masterpiece...</string>
     <string name="advanced_options">Advanced Options</string>
     <string name="i_dont_wanna_see">I don\'t wanna see...</string>
+    <string name="collections">Collections</string>
+    <string name="art_you_ve_saved_will_appear_here">Art you’ve saved will appear here</string>
+    <string name="save_to_device">Save to Device</string>
 </resources>

@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -59,10 +59,10 @@ fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
                     brush = Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Color.White.copy(alpha = 0.7f),
-                            Color.White.copy(alpha = 0.9f),
-                            Color.White.copy(alpha = 0.99f),
-                            Color.White
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.99f),
+                            MaterialTheme.colorScheme.primary
                         ),
                         startY = 0f,
                         endY = 1000f
@@ -85,9 +85,10 @@ fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
                     modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.icon_text_bottom_padding))
                 ) {
 
-                    Image(
+                    Icon(
                         painter = painterResource(R.drawable.splash_icon),
                         contentDescription = "Avatr Logo",
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.splash_icon_size))
                     )
@@ -95,7 +96,7 @@ fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
                         text = "Bring Your Art Ideas to Life\nwith Generative Art AI Models",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
-                        color = Color(0xff494d5a),
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
 
                 }
@@ -213,12 +214,12 @@ fun ImageList2(image1: Int,  image2: Int, image3: Int, modifier: Modifier = Modi
 }
 
 @Composable
-fun Button(text: Int) {
+ fun Button(text: Int) {
     Button(
         onClick = { /* Handle click */ },
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.button_width))
-            .height(dimensionResource(id = R.dimen.button_height)), colors = ButtonDefaults.buttonColors(containerColor = Color.Black, contentColor = Color.White), shape = RoundedCornerShape(8.dp)) {
+            .height(dimensionResource(id = R.dimen.button_height)), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimary, contentColor = MaterialTheme.colorScheme.primary), shape = RoundedCornerShape(8.dp)) {
 
 
         Row(
@@ -227,7 +228,7 @@ fun Button(text: Int) {
         ) {
 
             Text(stringResource(text), style = MaterialTheme.typography.bodyMedium)
-            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.White)
+            Icon(imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
 
         }
     }

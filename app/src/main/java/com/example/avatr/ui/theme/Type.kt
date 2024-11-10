@@ -23,7 +23,7 @@ val Geist = FontFamily(
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = Geist,
-        fontSize = 20.sp,
+        fontSize = 17.sp,
     ),
 
     bodySmall = TextStyle(
@@ -49,6 +49,16 @@ val Typography = Typography(
     ),
     bodyMedium = TextStyle(
         fontFamily = Geist,
-        fontSize = 14.sp
+        fontSize = 16.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = Geist,
+        fontSize = 18.sp
+    ),
+
+    labelMedium = TextStyle(
+        fontFamily = Geist,
+        fontSize = 17.sp,
+        fontWeight = FontWeight.Thin
     )
 )
