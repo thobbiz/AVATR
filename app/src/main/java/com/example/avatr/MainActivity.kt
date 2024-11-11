@@ -7,8 +7,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.avatr.ui.screens.ModelSelectionScreen
+import com.example.avatr.ui.screens.SavedImageScreen
+import com.example.avatr.ui.screens.SettingsScreen
 import com.example.avatr.ui.screens.SideMenuScreen
 import com.example.avatr.ui.theme.AvatrTheme
 
@@ -16,6 +22,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge()
         setContent {
             AvatrTheme {
@@ -41,6 +48,7 @@ class MainActivity : ComponentActivity() {
 //                    SavedImageScreen()
 
 //                    OnBoardingScreen(images1 = images1, images2 = images2)
+
                 }
             }
         }

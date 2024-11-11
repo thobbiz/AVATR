@@ -4,8 +4,8 @@
     <style name="Theme.YourApp.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item> <!-- Duration in ms -->
         <item name="postSplashScreenTheme">@style/Theme.Avatr</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
     </style>
 
     <style name="Theme.Avatr" parent="android:Theme.Material.Light.NoActionBar" />

@@ -28,24 +28,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
-
-
 @Composable
 fun SavedImageScreen(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val navController = rememberNavController()
 
     Column(
         modifier = Modifier
@@ -74,12 +75,11 @@ fun SavedImageScreen(
             SecondColumn()
         }
 
-        BottomNavigationBar()
+        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FirstColumn() {
 
@@ -102,8 +102,8 @@ private fun FirstColumn() {
                 modifier = Modifier.fillMaxSize(),
             )
         }
-        Text(text = "White Modern Cyborg Wearing a Helmet \nin a Dramatic Shot", style = MaterialTheme.typography.labelMedium)
-        Text(text = "Saved on: 16th April 2024", style = MaterialTheme.typography.labelSmall, color = Color(0xff494d5a))
+        Text(text = "White Modern Cyborg Wearing a Helmet \nin a Dramatic Shot", style = MaterialTheme.typography.labelLarge)
+        Text(text = "Saved on: 16th April 2024", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
     }
 }
 
@@ -116,13 +116,13 @@ private fun SecondColumn() {
        Row(
            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
        ){
-           Icon(painterResource(R.drawable.twitter_icon), contentDescription = "twitter", tint = Color(0xff747b82), modifier = Modifier.size(18.dp))
+           Icon(painterResource(R.drawable.twitter_icon), contentDescription = "twitter", tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(24.dp))
            Text(text = "Share on Twitter", style = MaterialTheme.typography.labelSmall)
        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
-            Icon(painterResource(R.drawable.remove_collections), contentDescription = "remove from collection", tint = Color(0xff747b82),  modifier = Modifier.size(18.dp))
+            Icon(painterResource(R.drawable.remove_collections), contentDescription = "remove from collection", tint = MaterialTheme.colorScheme.tertiary,  modifier = Modifier.size(24.dp))
             Text(text = "Remove from Collection", style = MaterialTheme.typography.labelSmall)
         }
         Button(imageVector = ImageVector.vectorResource(R.drawable.save_icon), text = R.string.save_to_device)
@@ -176,14 +176,8 @@ private fun Button(imageVector: ImageVector, text: Int) {
         ) {
 
             Icon(imageVector = imageVector, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            Text(stringResource(text), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(text), style = MaterialTheme.typography.labelSmall)
 
         }
     }
-}
-
-@Composable
-@Preview
-fun preview() {
-    SavedImageScreen()
 }

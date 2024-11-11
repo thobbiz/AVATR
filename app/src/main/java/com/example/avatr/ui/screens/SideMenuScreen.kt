@@ -30,13 +30,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
+import com.example.avatr.ui.navigation.AvatrNavHost
 import kotlinx.coroutines.launch
 
 @Composable
 fun SideMenuScreen() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val navController = rememberNavController()
     var isDarkModeEnabled by remember { mutableStateOf(false) }
 
     ModalNavigationDrawer(
@@ -144,6 +147,6 @@ fun SideMenuScreen() {
            }
         }
     ) {
-        HomeScreen( scope, drawerState)
+        AvatrNavHost(navController)
     }
 }

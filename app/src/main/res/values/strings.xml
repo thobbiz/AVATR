@@ -12,4 +12,12 @@
     <string name="collections">Collections</string>
     <string name="art_you_ve_saved_will_appear_here">Art you’ve saved will appear here</string>
     <string name="save_to_device">Save to Device</string>
+    <string name="export_saved_art">Export Saved Art</string>
+    <string name="delete_saved_art">Delete All Saved Art</string>
+    <string name="stable_diffusion_model">Stable Diffusion</string>
+    <string name="language">Language</string>
+    <string name="english">English(US)</string>
+    <string name="ai_model">AI Model</string>
+    <string name="preferences">Preferences</string>
+    <string name="tweak_settings">You can tweak some settings in here</string>
 </resources>

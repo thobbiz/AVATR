@@ -11,13 +11,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,8 +37,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,25 +52,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(scope: CoroutineScope, drawerState: DrawerState) {
+fun HomeScreen(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit,
+) {
 
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val navController = rememberNavController()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = dimensionResource(R.dimen.small_padding), vertical = 10.dp),
+            .padding(dimensionResource(R.dimen.large_padding)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .fillMaxHeight(0.9f),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
@@ -80,7 +94,7 @@ fun HomeScreen(scope: CoroutineScope, drawerState: DrawerState) {
             AdvancedOptions()
         }
 
-        BottomNavigationBar()
+        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
     }
 }
 
@@ -92,11 +106,9 @@ fun Header(scope: CoroutineScope, headerText: Int, drawerState: DrawerState) {
         modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
+            modifier = Modifier.size(30.dp),
             onClick = {
-            scope.launch{
-                drawerState.open()
-            }
-            }
+            scope.launch{ drawerState.open() } }
         ) {
             Icon(
                 painter = painterResource(R.drawable.menu_icon),
@@ -106,6 +118,7 @@ fun Header(scope: CoroutineScope, headerText: Int, drawerState: DrawerState) {
         Text(
             text = stringResource(headerText),
             style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
             maxLines = 2
         )
@@ -113,7 +126,7 @@ fun Header(scope: CoroutineScope, headerText: Int, drawerState: DrawerState) {
 }
 
 @Composable
-fun DescriptionTextField() {
+private fun DescriptionTextField() {
     var text by remember {
         mutableStateOf("")
     }
@@ -151,7 +164,7 @@ fun DescriptionTextField() {
         modifier = Modifier
             .width(450.dp)
             .height(dimensionResource(R.dimen.button_height))
-            .border(2.dp, Color.Transparent,shape = RoundedCornerShape(8.dp))
+            .border(2.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
             .onFocusChanged { focusState -> isFocused = focusState.isFocused },
         enabled = true,
         singleLine = true
@@ -163,7 +176,7 @@ private fun ImageContainer() {
  Card(
      modifier = Modifier
          .fillMaxWidth()
-         .border(2.dp,  MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+         .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
          .height(dimensionResource(id = R.dimen.button_width))
          .width(dimensionResource(id = R.dimen.button_width)),
     colors = CardDefaults.cardColors(containerColor = Color.Transparent)
@@ -186,7 +199,7 @@ private fun ImageContainer() {
 }
 
 @Composable
-fun AdvancedOptions() {
+private fun AdvancedOptions() {
 
     var text by remember {
         mutableStateOf("")
@@ -213,7 +226,7 @@ fun AdvancedOptions() {
             Text(
                 text = stringResource(R.string.advanced_options),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xff747b82)
+                color = MaterialTheme.colorScheme.tertiary
             )
 
             IconButton(onClick = { expanded = !expanded}, Modifier.size(20.dp)) {
@@ -258,15 +271,20 @@ fun AdvancedOptions() {
 }
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(
+    navController: NavController,
+    navigateToHome: () -> Unit = {},
+    navigateToCollections: () -> Unit = {},
+    navigateToSettings: () -> Unit = {},
+) {
 
     val items = listOf(
-        NavigationItem( "Home", R.drawable.home_icon,),
-        NavigationItem( "Collections", R.drawable.collections_icon),
-        NavigationItem( "Settings", R.drawable.settings_icon)
+        NavigationItem( "Home", R.drawable.home_icon, navigateToHome),
+        NavigationItem( "Collections", R.drawable.collections_icon, navigateToCollections),
+        NavigationItem( "Settings", R.drawable.settings_icon, navigateToSettings)
     )
 
-    var selectedItem by remember { mutableStateOf(0) }
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 
     Box(
         modifier = Modifier
@@ -290,23 +308,26 @@ fun BottomNavigationBar() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { index, item ->
+                    val isSelected = item.label == currentDestination
                     Icon(
                         painter = painterResource(
                             item.unselectedIcon
                         ),
                         contentDescription = item.label,
-                        tint = if (index == selectedItem) Color.White else Color.Gray,// Different tint for selected/unselected icons
+                        tint = if (isSelected) Color.White else Color.Gray,// Different tint for selected/unselected icons
                         modifier = Modifier
-                            .clickable { selectedItem = index }
+                            .clickable {
+                                item.navigateTo()
+                            }
                     )
                 }
             }
         }
     }
-
 }
 
 data class NavigationItem(
     val label:String,
-    val unselectedIcon: Int
+    val unselectedIcon: Int,
+    val navigateTo: () -> Unit
 )

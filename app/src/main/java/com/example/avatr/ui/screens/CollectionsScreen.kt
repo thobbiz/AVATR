@@ -8,29 +8,38 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun CollectionsScreen(scope: CoroutineScope, drawerState: DrawerState) {
+fun CollectionsScreen(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit,
+    ) {
 
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val navController = rememberNavController()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(dimensionResource(R.dimen.large_padding)),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
 
         Column(
@@ -73,6 +82,6 @@ fun CollectionsScreen(scope: CoroutineScope, drawerState: DrawerState) {
 
         }
 
-        BottomNavigationBar()
+        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
     }
 }

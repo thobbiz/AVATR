@@ -20,18 +20,22 @@ private val DarkColorScheme = darkColorScheme(
     primary = dark_primary,
     secondary = secondary,
     onPrimary = dark_onPrimary,
-    tertiary = light_tertiary,
+    tertiary = dark_tertiary,
     surface = Color.Black,
     outline = dark_border,
+    onTertiary = light_onTertiary,
+    onSecondary = dark_on_secondary
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = light_primary,
     onPrimary = light_onPrimary,
     secondary = secondary,
-    tertiary = dark_tertiary,
+    tertiary = light_tertiary,
     surface = Color.White,
-    outline = light_border
+    outline = light_border,
+    onTertiary = dark_onTertiary,
+    onSecondary = light_on_secondary
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

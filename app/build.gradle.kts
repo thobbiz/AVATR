@@ -52,8 +52,8 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation(platform("androidx.compose:compose-bom:2024.10.01"))
-    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation(platform(libs.androidx.compose.bom.v20241001))
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.activity.compose)
