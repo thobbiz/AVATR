@@ -12,52 +12,51 @@ import com.example.avatr.R
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
-val Geist = FontFamily(
-    Font(R.font.geist_bold),
-    Font(R.font.geist_medium),
-    Font(R.font.geist_regular)
+val CircluarStd = FontFamily(
+    Font(R.font.circularstd_medium),
+    Font(R.font.circularstd_bold)
 )
 
 // Set of Material typography styles to start with
 @RequiresApi(Build.VERSION_CODES.Q)
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 17.sp,
     ),
 
     bodySmall = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 12.sp,
     ),
     displayLarge = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 36.sp,
         fontWeight = FontWeight.Bold
     ),
     displayMedium = TextStyle(
-        fontFamily = Geist,
-        fontSize = 30.sp
+        fontFamily = CircluarStd,
+        fontSize = 32.sp
     ),
     displaySmall = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 26.sp
     ),
     labelSmall = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 14.sp
     ),
     bodyMedium = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 16.sp
     ),
     labelLarge = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 18.sp
     ),
 
     labelMedium = TextStyle(
-        fontFamily = Geist,
+        fontFamily = CircluarStd,
         fontSize = 17.sp,
         fontWeight = FontWeight.Thin
     )

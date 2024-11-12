@@ -20,11 +20,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
@@ -34,8 +29,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
 import com.example.avatr.R
+import com.example.avatr.ui.components.CustomButton
 
 @Composable
 fun OnBoardingScreen(images1: List<Int>,images2: List<Int>) {
@@ -43,7 +38,7 @@ fun OnBoardingScreen(images1: List<Int>,images2: List<Int>) {
 }
 
 @Composable
-fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
+private fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             ImageList1(image1 = images1[0], image2 = images1[1])
@@ -101,18 +96,17 @@ fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
 
                 }
 
-
                 Spacer(modifier = Modifier.height(8.dp))
 
                 //Get Started Button
-               Button(text = R.string.get_started)
+               CustomButton(R.string.get_started)
             }
         }
     }
 }
 
 @Composable
-fun ImageList1(image1: Int, image2: Int, modifier: Modifier = Modifier) {
+private fun ImageList1(image1: Int, image2: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -156,7 +150,7 @@ fun ImageList1(image1: Int, image2: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ImageList2(image1: Int,  image2: Int, image3: Int, modifier: Modifier = Modifier) {
+private fun ImageList2(image1: Int,  image2: Int, image3: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
@@ -209,27 +203,6 @@ fun ImageList2(image1: Int,  image2: Int, image3: Int, modifier: Modifier = Modi
                     .height(dimensionResource(R.dimen.large_image_height))
                     .fillMaxSize()
             )
-        }
-    }
-}
-
-@Composable
- fun Button(text: Int) {
-    Button(
-        onClick = { /* Handle click */ },
-        modifier = Modifier
-            .width(dimensionResource(id = R.dimen.button_width))
-            .height(dimensionResource(id = R.dimen.button_height)), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimary, contentColor = MaterialTheme.colorScheme.primary), shape = RoundedCornerShape(8.dp)) {
-
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
-        ) {
-
-            Text(stringResource(text), style = MaterialTheme.typography.bodyMedium)
-            Icon(imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-
         }
     }
 }

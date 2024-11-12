@@ -20,8 +20,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
+import com.example.avatr.ui.components.CustomHeader
+import com.example.avatr.ui.components.CustomNavBar
 
 @Composable
 fun CollectionsScreen(
@@ -45,7 +49,8 @@ fun CollectionsScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f),
+                .fillMaxHeight(0.9f)
+                .padding(top = 16.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
@@ -56,10 +61,11 @@ fun CollectionsScreen(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
             ) {
 
-                Header(scope = scope, headerText = R.string.collections, drawerState = drawerState)
+                CustomHeader(scope = scope, headerText = R.string.collections, drawerState = drawerState)
 
                 Text(
                     text = stringResource(R.string.art_you_ve_saved_will_appear_here),
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xff747b82)
                 )
@@ -76,12 +82,13 @@ fun CollectionsScreen(
                 Text(
                     text = "You haven’t saved any art yet",
                     style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
                     color = Color(0xff747b82)
                 )
             }
 
         }
 
-        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
     }
 }

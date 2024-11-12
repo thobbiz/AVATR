@@ -1,8 +1,6 @@
 package com.example.avatr.ui.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,15 +35,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
+import com.example.avatr.ui.components.CustomNavBar
 
 @Composable
 fun SavedImageScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
+    SavedImageBody(navigateToHome, navigateToCollections, navigateToSettings)
+}
 
+@Composable
+private fun SavedImageBody(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit
+) {
     val navController = rememberNavController()
 
     Column(
@@ -75,7 +81,7 @@ fun SavedImageScreen(
             SecondColumn()
         }
 
-        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
 
     }
 }

@@ -31,9 +31,15 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
+import com.example.avatr.ui.components.CustomButton
 
 @Composable
-fun ModelSelectionScreen(model1: Int, model2: Int, modifier : Modifier = Modifier) {
+fun ModelSelectionScreen(model1: Int, model2: Int) {
+    ModelOptionBody(model1 = model1, model2 = model2 )
+}
+
+@Composable
+private fun ModelOptionBody(model1: Int, model2: Int) {
     var selectedCardIndex by remember { mutableIntStateOf(-1) }
 
 
@@ -77,7 +83,7 @@ fun ModelSelectionScreen(model1: Int, model2: Int, modifier : Modifier = Modifie
             }
         }
 
-        Button(text = R.string.lets_go)
+        CustomButton(text = R.string.lets_go)
     }
 }
 

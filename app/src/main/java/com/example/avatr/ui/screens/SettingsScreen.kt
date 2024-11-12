@@ -26,10 +26,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
+import com.example.avatr.ui.components.CustomHeader
+import com.example.avatr.ui.components.CustomNavBar
 
 
 @Composable
@@ -38,6 +40,15 @@ fun SettingsScreen(
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
     ) {
+    SettingsBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings)
+}
+
+@Composable
+private fun SettingsBody(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val navController = rememberNavController()
@@ -49,11 +60,11 @@ fun SettingsScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f),
+                .fillMaxHeight(0.9f)
+                .padding(top = 16.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
@@ -64,11 +75,12 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
             ) {
 
-                Header(scope = scope, headerText = R.string.preferences, drawerState = drawerState)
+                CustomHeader(scope = scope, headerText = R.string.preferences, drawerState = drawerState)
 
                 Text(
                     text = stringResource(R.string.tweak_settings),
                     style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
                     color = Color(0xff747b82)
                 )
             }
@@ -85,8 +97,7 @@ fun SettingsScreen(
                 SecondColumn()
             }
         }
-
-        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
     }
 }
 
@@ -97,16 +108,8 @@ private fun FirstColumn() {
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-
-        FirstColumnFirstRowBlueprint(
-            imageVector = R.drawable.ai_model_icon,
-            text = R.string.ai_model
-        )
-
-        FirstColumnSecondRowBlueprint(
-            imageVector = R.drawable.language_icon,
-            text = R.string.language
-        )
+        FirstColumnFirstRowBlueprint(imageVector = R.drawable.ai_model_icon, text = R.string.ai_model)
+        FirstColumnSecondRowBlueprint(imageVector = R.drawable.language_icon, text = R.string.language)
     }
 }
 
@@ -132,7 +135,6 @@ private fun FirstColumnFirstRowBlueprint(imageVector: Int, text: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Row(
             modifier = Modifier.wrapContentWidth(),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
@@ -147,7 +149,8 @@ private fun FirstColumnFirstRowBlueprint(imageVector: Int, text: Int) {
             Text(
                 text = stringResource(text),
                 style = MaterialTheme.typography.bodyMedium,
-                color =  MaterialTheme.colorScheme.onSecondary
+                color =  MaterialTheme.colorScheme.onSecondary,
+                fontWeight = FontWeight.Bold
             )
         }
 
@@ -155,8 +158,7 @@ private fun FirstColumnFirstRowBlueprint(imageVector: Int, text: Int) {
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Text(text = stringResource(R.string.stable_diffusion_model), color = MaterialTheme.colorScheme.onTertiary)
+            Text(text = stringResource(R.string.stable_diffusion_model), color = MaterialTheme.colorScheme.onTertiary, fontWeight = FontWeight.Bold)
 
             Column(
                 modifier = Modifier,
@@ -190,7 +192,6 @@ private fun FirstColumnSecondRowBlueprint(imageVector: Int, text: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Row(
             modifier = Modifier.wrapContentWidth(),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
@@ -205,6 +206,7 @@ private fun FirstColumnSecondRowBlueprint(imageVector: Int, text: Int) {
             Text(
                 text = stringResource(text),
                 style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSecondary
             )
         }
@@ -213,8 +215,7 @@ private fun FirstColumnSecondRowBlueprint(imageVector: Int, text: Int) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
         ) {
-
-            Text(text = stringResource(R.string.english), color = MaterialTheme.colorScheme.onTertiary)
+            Text(text = stringResource(R.string.english), color = MaterialTheme.colorScheme.onTertiary, fontWeight = FontWeight.Bold)
 
             IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(18.dp)) {
                 Icon(
@@ -234,7 +235,6 @@ private fun SecondColumnBlueprint(imageVector: Int, text: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Row(
             modifier = Modifier.wrapContentWidth(),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
@@ -253,7 +253,6 @@ private fun SecondColumnBlueprint(imageVector: Int, text: Int) {
             )
         }
 
-
         IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(18.dp)) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.arrowfront_icon),
@@ -262,10 +261,4 @@ private fun SecondColumnBlueprint(imageVector: Int, text: Int) {
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun bjqjnas() {
-    SideMenuScreen()
 }

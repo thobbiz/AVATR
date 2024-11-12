@@ -4,11 +4,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -26,18 +23,15 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,12 +46,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.example.avatr.ui.components.CustomHeader
+import com.example.avatr.ui.components.CustomNavBar
 
 @Composable
 fun HomeScreen(
@@ -65,7 +57,15 @@ fun HomeScreen(
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
 ) {
+   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings)
+}
 
+@Composable
+private fun HomeBody(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val navController = rememberNavController()
@@ -80,12 +80,12 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f),
+                .fillMaxHeight(0.9f)
+                .padding(top = 16.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
-
-            Header(scope, headerText = R.string.home_screen_header, drawerState)
+            CustomHeader(scope, headerText = R.string.home_screen_header, drawerState)
 
             ImageContainer()
 
@@ -93,35 +93,7 @@ fun HomeScreen(
 
             AdvancedOptions()
         }
-
-        BottomNavigationBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
-    }
-}
-
-@Composable
-fun Header(scope: CoroutineScope, headerText: Int, drawerState: DrawerState) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        IconButton(
-            modifier = Modifier.size(30.dp),
-            onClick = {
-            scope.launch{ drawerState.open() } }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.menu_icon),
-                contentDescription = "menu"
-            )
-        }
-        Text(
-            text = stringResource(headerText),
-            style = MaterialTheme.typography.displayMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-            fontWeight = FontWeight.Bold,
-            maxLines = 2
-        )
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
     }
 }
 
@@ -136,15 +108,15 @@ private fun DescriptionTextField() {
     OutlinedTextField(
         value = text,
         onValueChange = { text = it },
-        placeholder = { Text(stringResource(R.string.describe_your_ai_masterpiece),  style = MaterialTheme.typography.bodyMedium, color = Color(0xff494d5a)) },
+        placeholder = { Text(stringResource(R.string.describe_your_ai_masterpiece),  style = MaterialTheme.typography.bodyMedium, color = Color(0xff494d5a), fontWeight = FontWeight.Bold) },
         shape = RoundedCornerShape(8.dp),
-        textStyle = MaterialTheme.typography.bodySmall,
+        textStyle = MaterialTheme.typography.bodyMedium,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline
         ),
         leadingIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(24.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.upload_icon),
                     contentDescription = "upload",
@@ -192,7 +164,7 @@ private fun ImageContainer() {
              contentScale = ContentScale.Crop
          )
 
-         Text(text = stringResource(R.string.no_generated_image), style = MaterialTheme.typography.bodyMedium, color = Color(0xff747b82))
+         Text(text = stringResource(R.string.no_generated_image), style = MaterialTheme.typography.bodyMedium, color = Color(0xff747b82), fontWeight = FontWeight.Bold)
      }
     }
 
@@ -226,6 +198,7 @@ private fun AdvancedOptions() {
             Text(
                 text = stringResource(R.string.advanced_options),
                 style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.tertiary
             )
 
@@ -242,7 +215,7 @@ private fun AdvancedOptions() {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                placeholder = { Text(stringResource(R.string.i_dont_wanna_see),  style = MaterialTheme.typography.bodyMedium, color = Color(0xff494d5a)) },
+                placeholder = { Text(stringResource(R.string.i_dont_wanna_see),  style = MaterialTheme.typography.bodyMedium, color = Color(0xff494d5a), fontWeight = FontWeight.Bold) },
                 shape = RoundedCornerShape(8.dp),
                 textStyle = MaterialTheme.typography.bodySmall,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -250,7 +223,7 @@ private fun AdvancedOptions() {
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline
                 ),
                 leadingIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { /*TODO*/ },modifier = Modifier.size(24.dp)) {
                         Icon(
                             painter = painterResource(R.drawable.exclude_icon),
                             contentDescription = "upload",
@@ -269,65 +242,3 @@ private fun AdvancedOptions() {
         }
     }
 }
-
-@Composable
-fun BottomNavigationBar(
-    navController: NavController,
-    navigateToHome: () -> Unit = {},
-    navigateToCollections: () -> Unit = {},
-    navigateToSettings: () -> Unit = {},
-) {
-
-    val items = listOf(
-        NavigationItem( "Home", R.drawable.home_icon, navigateToHome),
-        NavigationItem( "Collections", R.drawable.collections_icon, navigateToCollections),
-        NavigationItem( "Settings", R.drawable.settings_icon, navigateToSettings)
-    )
-
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(Color.Transparent), // Transparent background for the outer box
-        contentAlignment = Alignment.Center
-    ) {
-        // Pebble-like rounded background
-        Surface(
-            color = Color.Black,
-            shape = RoundedCornerShape(30.dp), // Creates the rounded "pebble" effect
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(0.45f)
-                .height(60.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                items.forEachIndexed { index, item ->
-                    val isSelected = item.label == currentDestination
-                    Icon(
-                        painter = painterResource(
-                            item.unselectedIcon
-                        ),
-                        contentDescription = item.label,
-                        tint = if (isSelected) Color.White else Color.Gray,// Different tint for selected/unselected icons
-                        modifier = Modifier
-                            .clickable {
-                                item.navigateTo()
-                            }
-                    )
-                }
-            }
-        }
-    }
-}
-
-data class NavigationItem(
-    val label:String,
-    val unselectedIcon: Int,
-    val navigateTo: () -> Unit
-)
