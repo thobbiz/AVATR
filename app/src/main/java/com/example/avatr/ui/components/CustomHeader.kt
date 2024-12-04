@@ -40,7 +40,7 @@ fun CustomHeader(scope: CoroutineScope, headerText: Int, drawerState: DrawerStat
         }
         Text(
             text = stringResource(headerText),
-            style = MaterialTheme.typography.displayMedium,
+            style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
             maxLines = 2

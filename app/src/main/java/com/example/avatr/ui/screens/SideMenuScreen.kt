@@ -147,6 +147,6 @@ fun SideMenuScreen() {
            }
         }
     ) {
-        AvatrNavHost(navController)
+        AvatrNavHost(navController, drawerState, scope)
     }
 }

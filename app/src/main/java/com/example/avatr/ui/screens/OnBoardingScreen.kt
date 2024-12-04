@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import com.example.avatr.R
-import com.example.avatr.ui.components.CustomButton
+import com.example.avatr.ui.components.CustomButton1
 
 @Composable
 fun OnBoardingScreen(images1: List<Int>,images2: List<Int>) {
@@ -99,7 +99,7 @@ private fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 //Get Started Button
-               CustomButton(R.string.get_started)
+               CustomButton1(R.string.get_started)
             }
         }
     }

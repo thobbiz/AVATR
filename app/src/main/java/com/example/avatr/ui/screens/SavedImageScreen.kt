@@ -36,21 +36,24 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomNavBar
+import com.example.avatr.ui.components.CustomTopAppBar
 
 @Composable
 fun SavedImageScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateBack: () -> Unit
 ) {
-    SavedImageBody(navigateToHome, navigateToCollections, navigateToSettings)
+    SavedImageBody(navigateToHome, navigateToCollections, navigateToSettings, navigateBack)
 }
 
 @Composable
 private fun SavedImageBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit
+    navigateToSettings: () -> Unit,
+    navigateBack: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -71,7 +74,7 @@ private fun SavedImageBody(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
 
-            SavedImageTopAppBar()
+            CustomTopAppBar(title = R.string.saved_image, navigateBack = navigateBack)
 
             FirstColumn()
 
@@ -135,31 +138,6 @@ private fun SecondColumn() {
     }
 }
 
-@Composable
-private fun SavedImageTopAppBar(
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
-    ) {
-        Box(
-            modifier = Modifier
-                .size(14.dp) // set the desired size for your icon
-                .clickable { /* handle click here */ }
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.arrowback_icon),
-                contentDescription = "Your icon",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-        Text("Saved Image", style =  MaterialTheme.typography.labelLarge)
-    }
-}
 
 @Composable
 private fun Button(imageVector: ImageVector, text: Int) {

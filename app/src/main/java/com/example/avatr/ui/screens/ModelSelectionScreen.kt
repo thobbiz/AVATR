@@ -31,7 +31,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
-import com.example.avatr.ui.components.CustomButton
+import com.example.avatr.ui.components.CustomButton1
 
 @Composable
 fun ModelSelectionScreen(model1: Int, model2: Int) {
@@ -83,7 +83,7 @@ private fun ModelOptionBody(model1: Int, model2: Int) {
             }
         }
 
-        CustomButton(text = R.string.lets_go)
+        CustomButton1(text = R.string.lets_go)
     }
 }
 

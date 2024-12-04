@@ -1,5 +1,6 @@
 package com.example.avatr
 
+import android.media.audiofx.DynamicsProcessing.Config
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity

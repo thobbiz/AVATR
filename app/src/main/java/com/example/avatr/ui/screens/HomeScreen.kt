@@ -1,13 +1,18 @@
 package com.example.avatr.ui.screens
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresExtension
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,7 +27,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,25 +53,35 @@ import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
+import com.example.avatr.ui.viewmodels.HomeScreenUiState
+import com.example.avatr.ui.viewmodels.HomeScreenViewModel
+import kotlinx.coroutines.CoroutineScope
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun HomeScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
+    drawerState: DrawerState,
+    scope: CoroutineScope
 ) {
-   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings)
+   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, scope = scope, drawerState = drawerState)
 }
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 private fun HomeBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
+    drawerState: DrawerState,
+    scope: CoroutineScope
 ) {
-    val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val viewModel = HomeScreenViewModel()
     val navController = rememberNavController()
+    var promptText by remember { mutableStateOf("") }
+    var negativePromptText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -85,29 +98,41 @@ private fun HomeBody(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
-            CustomHeader(scope, headerText = R.string.home_screen_header, drawerState)
+            CustomHeader(scope = scope, headerText = R.string.home_screen_header, drawerState = drawerState)
 
-            ImageContainer()
+            ImageContainer(viewModel.homeScreenUiState)
 
-            DescriptionTextField()
+            DescriptionTextField(
+                text = promptText,
+                onTextChange = { newText -> promptText = newText },
+                onGenerate = {
+                    if (promptText.isBlank()) {
+                    Log.w("GenerateImage", "Prompt text is empty!")
+                } else {
+                    viewModel.generateImage(promptText, negativePromptText)
+                }}
+            )
 
-            AdvancedOptions()
+            AdvancedOptions(
+                text = negativePromptText,
+                onTextChange = { newText -> negativePromptText = newText }
+            )
         }
         CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
     }
 }
 
 @Composable
-private fun DescriptionTextField() {
-    var text by remember {
-        mutableStateOf("")
-    }
-
+private fun DescriptionTextField(
+    text: String,
+    onTextChange: (String) -> Unit,
+    onGenerate: () -> Unit = {}
+) {
     var isFocused by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = {newText -> onTextChange(newText)},
         placeholder = { Text(stringResource(R.string.describe_your_ai_masterpiece),  style = MaterialTheme.typography.bodyMedium, color = Color(0xff494d5a), fontWeight = FontWeight.Bold) },
         shape = RoundedCornerShape(8.dp),
         textStyle = MaterialTheme.typography.bodyMedium,
@@ -126,9 +151,9 @@ private fun DescriptionTextField() {
         },
 
         trailingIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onGenerate) {
                 Icon(
-                    painter = painterResource(R.drawable.generate_icon),
+                    painter = painterResource(R.drawable.generate_icon_button),
                     contentDescription = "generate"
                 )
             }
@@ -144,38 +169,64 @@ private fun DescriptionTextField() {
 }
 
 @Composable
-private fun ImageContainer() {
+private fun ImageContainer(
+    homeScreenUiState: HomeScreenUiState
+) {
  Card(
      modifier = Modifier
          .fillMaxWidth()
          .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-         .height(dimensionResource(id = R.dimen.button_width))
-         .width(dimensionResource(id = R.dimen.button_width)),
+         .fillMaxHeight(0.6f),
     colors = CardDefaults.cardColors(containerColor = Color.Transparent)
  ) {
-     Column(
-         modifier = Modifier.fillMaxSize(),
-         verticalArrangement = Arrangement.Center,
-         horizontalAlignment = Alignment.CenterHorizontally,
-     ) {
-         Image(
-             painter = painterResource(R.drawable.brush_icon),
-             contentDescription = null,
-             contentScale = ContentScale.Crop
-         )
 
-         Text(text = stringResource(R.string.no_generated_image), style = MaterialTheme.typography.bodyMedium, color = Color(0xff747b82), fontWeight = FontWeight.Bold)
+     when(homeScreenUiState) {
+         is HomeScreenUiState.NoRequest -> EmptyScreen()
+         is HomeScreenUiState.Success -> SuccessScreen(image = homeScreenUiState.image)
+         is HomeScreenUiState.Error -> TODO()
+         is HomeScreenUiState.Loading -> TODO()
      }
+
     }
 
 }
 
 @Composable
-private fun AdvancedOptions() {
-
-    var text by remember {
-        mutableStateOf("")
+private fun SuccessScreen(image: String) {
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = image)
     }
+}
+
+@Composable
+private fun EmptyScreen(
+
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(R.drawable.brush_icon),
+            modifier = Modifier.size(80.dp),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        
+        Spacer(modifier = Modifier.size(20.dp))
+
+        Text(text = stringResource(R.string.no_generated_image), style = MaterialTheme.typography.bodySmall, color = Color(0xff747b82), fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+private fun AdvancedOptions(
+    text: String,
+    onTextChange: (String) -> Unit,
+) {
     var expanded by remember { mutableStateOf(false) }
     var isFocused by remember { mutableStateOf(false) }
 
@@ -214,7 +265,7 @@ private fun AdvancedOptions() {
         if(expanded) {
             OutlinedTextField(
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = onTextChange ,
                 placeholder = { Text(stringResource(R.string.i_dont_wanna_see),  style = MaterialTheme.typography.bodyMedium, color = Color(0xff494d5a), fontWeight = FontWeight.Bold) },
                 shape = RoundedCornerShape(8.dp),
                 textStyle = MaterialTheme.typography.bodySmall,

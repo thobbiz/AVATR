@@ -2,6 +2,7 @@ package com.example.avatr.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,11 +22,11 @@ import com.example.avatr.R
 
 
 @Composable
-fun CustomButton(text: Int) {
+fun CustomButton1(text: Int) {
     androidx.compose.material3.Button(
         onClick = { /* Handle click */ },
         modifier = Modifier
-            .width(dimensionResource(id = R.dimen.button_width))
+            .fillMaxWidth()
             .height(dimensionResource(id = R.dimen.button_height)),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,

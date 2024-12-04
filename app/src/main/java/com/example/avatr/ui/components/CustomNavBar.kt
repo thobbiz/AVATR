@@ -13,15 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.avatr.R
 
 @Composable
@@ -33,14 +32,13 @@ fun CustomNavBar(
 ) {
 
     val items = listOf(
-        NavigationItem( "Home", R.drawable.home_icon, navigateToHome),
-        NavigationItem( "Collections", R.drawable.collections_icon, navigateToCollections),
-        NavigationItem( "Settings", R.drawable.settings_icon, navigateToSettings)
+        NavigationItem( "Home", R.drawable.home_icon, R.drawable.home_icon_clicked, navigateToHome),
+        NavigationItem( "Collections", R.drawable.collections_icon, R.drawable.collection_icon_clicked , navigateToCollections),
+        NavigationItem( "Settings", R.drawable.settings_icon, R.drawable.setting_icon_clicked, navigateToSettings)
     )
 
-    val currentRoute by remember {
-        derivedStateOf { navController.currentBackStackEntry?.destination?.route}
-    }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route.toString()
 
 
     Box(
@@ -57,22 +55,23 @@ fun CustomNavBar(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(0.45f)
-                .height(60.dp)
+                .height(45.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { index, item ->
                     val isSelected = item.label == currentRoute
                     Icon(
                         painter = painterResource(
-                            item.icon
+                            if (isSelected) item.iconClicked else item.icon
                         ),
                         contentDescription = item.label,
                         tint = if (isSelected) Color.White else Color.Gray,
                         modifier = Modifier
+                            .padding(4.dp)
                             .clickable {
                                 item.navigateTo()
                             }
@@ -86,5 +85,6 @@ fun CustomNavBar(
 data class NavigationItem(
     val label:String,
     val icon: Int,
+    val iconClicked: Int,
     val navigateTo: () -> Unit
 )

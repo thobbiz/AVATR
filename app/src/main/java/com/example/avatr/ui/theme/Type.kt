@@ -27,32 +27,32 @@ val Typography = Typography(
 
     bodySmall = TextStyle(
         fontFamily = CircluarStd,
-        fontSize = 12.sp,
-    ),
-    displayLarge = TextStyle(
-        fontFamily = CircluarStd,
-        fontSize = 36.sp,
-        fontWeight = FontWeight.Bold
-    ),
-    displayMedium = TextStyle(
-        fontFamily = CircluarStd,
-        fontSize = 32.sp
-    ),
-    displaySmall = TextStyle(
-        fontFamily = CircluarStd,
-        fontSize = 26.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = CircluarStd,
-        fontSize = 14.sp
+        fontSize = 14.sp,
     ),
     bodyMedium = TextStyle(
         fontFamily = CircluarStd,
         fontSize = 16.sp
     ),
+    displayLarge = TextStyle(
+        fontFamily = CircluarStd,
+        fontSize = 32.sp,
+        fontWeight = FontWeight.Bold
+    ),
+    displayMedium = TextStyle(
+        fontFamily = CircluarStd,
+        fontSize = 24.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = CircluarStd,
+        fontSize = 20.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = CircluarStd,
+        fontSize = 14.sp
+    ),
     labelLarge = TextStyle(
         fontFamily = CircluarStd,
-        fontSize = 18.sp
+        fontSize = 20.sp
     ),
 
     labelMedium = TextStyle(

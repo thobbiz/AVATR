@@ -1,5 +1,8 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
@@ -18,11 +21,21 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        buildConfigField ("String", "API_KEY", properties.getProperty("API_KEY"))
+    }
+
+    buildFeatures{
+        buildConfig = true
+        compose = true
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,11 +49,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -63,6 +73,19 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.retrofit)
+    implementation (libs.converter.gson)
+
+//    implementation(libs.ktor.server.core)
+//    implementation(libs.ktor.server.netty)
+//    implementation(libs.ktor.server.content.negotiation)
+//    implementation(libs.ktor.serialization.gson)
+//    implementation(libs.ktor.client.core.v235)
+//    implementation(libs.ktor.client.cio)
+//    implementation(libs.ktor.client.content.negotiation)
+//    implementation(libs.ktor.serialization.gson)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

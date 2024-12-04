@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,16 +24,33 @@ import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun CollectionsScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
+    drawerState: DrawerState,
+    scope: CoroutineScope
     ) {
+    CollectionsBody(
+        navigateToHome = navigateToHome,
+        navigateToCollections = navigateToCollections,
+        navigateToSettings = navigateToSettings,
+        drawerState = drawerState,
+        scope = scope
+    )
+}
 
-    val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+@Composable
+private fun CollectionsBody(
+    navigateToHome: () -> Unit,
+    navigateToCollections: () -> Unit,
+    navigateToSettings: () -> Unit,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
     val navController = rememberNavController()
 
     Column(

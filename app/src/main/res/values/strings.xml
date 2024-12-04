@@ -19,5 +19,10 @@
     <string name="english">English(US)</string>
     <string name="ai_model">AI Model</string>
     <string name="preferences">Preferences</string>
+    <string name="saved_image">Saved Image</string>
+    <string name="download_all">Download a zip of all your saved art</string>
+    <string name="export_as_zip">Export as Zip</string>
+    <string name="delete_all">Delete all your saved art in your collection</string>
+    <string name="delete_everything">Delete Everything!</string>
     <string name="tweak_settings">You can tweak some settings in here</string>
 </resources>
