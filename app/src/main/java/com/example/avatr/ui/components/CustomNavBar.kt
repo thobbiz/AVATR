@@ -1,5 +1,6 @@
 package com.example.avatr.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +31,6 @@ fun CustomNavBar(
     navigateToCollections: () -> Unit = {},
     navigateToSettings: () -> Unit = {},
 ) {
-
     val items = listOf(
         NavigationItem( "Home", R.drawable.home_icon, R.drawable.home_icon_clicked, navigateToHome),
         NavigationItem( "Collections", R.drawable.collections_icon, R.drawable.collection_icon_clicked , navigateToCollections),
@@ -38,8 +38,9 @@ fun CustomNavBar(
     )
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route.toString()
+    val currentScreen = currentBackStackEntry?.destination?.route
 
+    Log.e("why", currentScreen.toString())
 
     Box(
         modifier = Modifier
@@ -63,7 +64,7 @@ fun CustomNavBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { index, item ->
-                    val isSelected = item.label == currentRoute
+                    val isSelected = item.label == currentBackStackEntry.toString()
                     Icon(
                         painter = painterResource(
                             if (isSelected) item.iconClicked else item.icon

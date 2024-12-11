@@ -43,7 +43,6 @@ fun CustomTopAppBar(
                 .size(12.dp)
                 .clickable { /* handle click here */ }
         ) {
-
             IconButton(onClick = navigateBack, modifier = Modifier.size(18.dp)) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.arrowback_icon),

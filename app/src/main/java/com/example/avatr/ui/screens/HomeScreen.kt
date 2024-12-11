@@ -8,8 +8,8 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,37 +25,50 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
+import androidx.compose.material3.Button
+import androidx.compose.runtime.derivedStateOf
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -63,25 +76,31 @@ fun HomeScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
-    drawerState: DrawerState,
-    scope: CoroutineScope
+    drawerState: DrawerState
 ) {
-   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, scope = scope, drawerState = drawerState)
+   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, drawerState = drawerState)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 private fun HomeBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
-    drawerState: DrawerState,
-    scope: CoroutineScope
+    drawerState: DrawerState
 ) {
-    val viewModel = HomeScreenViewModel()
+    val viewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
     val navController = rememberNavController()
-    var promptText by remember { mutableStateOf("") }
-    var negativePromptText by remember { mutableStateOf("") }
+    var promptText by rememberSaveable { mutableStateOf("") }
+    var negativePromptText by rememberSaveable { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+    val isSheetOpen = remember {
+        derivedStateOf {
+            viewModel.homeScreenUiState is HomeScreenUiState.NoRequest
+        }
+    }
+    val sheetState = rememberModalBottomSheetState()
 
     Column(
         modifier = Modifier
@@ -99,8 +118,9 @@ private fun HomeBody(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
             CustomHeader(scope = scope, headerText = R.string.home_screen_header, drawerState = drawerState)
-
-            ImageContainer(viewModel.homeScreenUiState)
+            ImageContainer(viewModel, modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.6f))
 
             DescriptionTextField(
                 text = promptText,
@@ -108,17 +128,94 @@ private fun HomeBody(
                 onGenerate = {
                     if (promptText.isBlank()) {
                     Log.w("GenerateImage", "Prompt text is empty!")
-                } else {
+                    } else {
                     viewModel.generateImage(promptText, negativePromptText)
-                }}
+                    }
+                }
             )
-
             AdvancedOptions(
                 text = negativePromptText,
                 onTextChange = { newText -> negativePromptText = newText }
             )
         }
         CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+
+        //Bottom Sheet
+        if(isSheetOpen.value) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scope.launch { sheetState.hide() }
+                },
+                sheetState = sheetState,
+                containerColor = MaterialTheme.colorScheme.primary
+            )
+            {
+                Column(
+                    modifier = Modifier.padding(25.dp),
+                    verticalArrangement = Arrangement.spacedBy(40.dp),
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(15.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.remove_collections),
+                                contentDescription = "remove from collection",
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "Remove from Collection",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.twitter_icon),
+                                contentDescription = "twitter",
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(text = stringResource(R.string.share_on_twitter), style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                    Button(
+                        onClick = {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    viewModel.saveImageToGallery(
+                                        (viewModel.homeScreenUiState as HomeScreenUiState.Success).image
+                                    )
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimary,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
+                        ) {
+                            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.save_icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                            Text(stringResource(R.string.save_to_device), style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -129,6 +226,7 @@ private fun DescriptionTextField(
     onGenerate: () -> Unit = {}
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val darkMode = isSystemInDarkTheme()
 
     OutlinedTextField(
         value = text,
@@ -138,12 +236,16 @@ private fun DescriptionTextField(
         textStyle = MaterialTheme.typography.bodyMedium,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+            cursorColor = MaterialTheme.colorScheme.onPrimary
         ),
         leadingIcon = {
-            IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(24.dp)) {
+            IconButton(onClick = { /*TODO*/ }, modifier = Modifier
+                .size(30.dp)
+                .padding(0.dp)) {
                 Icon(
-                    painter = painterResource(R.drawable.upload_icon),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.upload_icon),
+                    modifier = Modifier.size(25.dp),
                     contentDescription = "upload",
                     tint = if (isFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.outline,
                 )
@@ -151,10 +253,14 @@ private fun DescriptionTextField(
         },
 
         trailingIcon = {
-            IconButton(onClick = onGenerate) {
+            IconButton(onClick = onGenerate, modifier = Modifier
+                .size(50.dp)
+                .padding(0.dp)) {
                 Icon(
-                    painter = painterResource(R.drawable.generate_icon_button),
-                    contentDescription = "generate"
+                    imageVector = ImageVector.vectorResource(if(darkMode) { R.drawable.generate_icon_dark_mode} else { R.drawable.generate_icon_light_mode}),
+                    contentDescription = "generate",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(35.dp)
                 )
             }
         },
@@ -170,55 +276,111 @@ private fun DescriptionTextField(
 
 @Composable
 private fun ImageContainer(
-    homeScreenUiState: HomeScreenUiState
+    viewModel: HomeScreenViewModel,
+    modifier: Modifier
 ) {
- Card(
-     modifier = Modifier
-         .fillMaxWidth()
-         .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-         .fillMaxHeight(0.6f),
-    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
- ) {
 
-     when(homeScreenUiState) {
-         is HomeScreenUiState.NoRequest -> EmptyScreen()
-         is HomeScreenUiState.Success -> SuccessScreen(image = homeScreenUiState.image)
-         is HomeScreenUiState.Error -> TODO()
-         is HomeScreenUiState.Loading -> TODO()
-     }
 
+
+    when(viewModel.homeScreenUiState) {
+        is HomeScreenUiState.NoRequest -> EmptyScreen()
+        is HomeScreenUiState.Success -> SuccessScreen(viewModel, (viewModel.homeScreenUiState as HomeScreenUiState.Success).image)
+        is HomeScreenUiState.Error -> ErrorScreen(modifier = Modifier.fillMaxSize(), (viewModel.homeScreenUiState as HomeScreenUiState.Error).error)
+        else -> LoadingScreen(modifier = Modifier.fillMaxSize())
     }
 
 }
 
 @Composable
-private fun SuccessScreen(image: String) {
-    Box(
-        contentAlignment = Alignment.Center
+private fun SuccessScreen(viewModel: HomeScreenViewModel, image: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
+            .fillMaxHeight(0.6f),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Text(text = image)
+        val bitmap = viewModel.convertBase64ToBitmap(image)
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            modifier = Modifier.fillMaxSize(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+private fun ErrorScreen(modifier: Modifier, error: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .fillMaxHeight(0.6f),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text( error, style = MaterialTheme.typography.bodyLarge)
+        }
+    }
+}
+
+@Composable
+private fun LoadingScreen(modifier: Modifier) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .fillMaxHeight(0.6f),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text("Loading...", style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }
 
 @Composable
 private fun EmptyScreen(
-
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .fillMaxHeight(0.6f),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Image(
-            painter = painterResource(R.drawable.brush_icon),
-            modifier = Modifier.size(80.dp),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-        
-        Spacer(modifier = Modifier.size(20.dp))
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(R.drawable.brush_icon),
+                modifier = Modifier.size(80.dp),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
 
-        Text(text = stringResource(R.string.no_generated_image), style = MaterialTheme.typography.bodySmall, color = Color(0xff747b82), fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.size(20.dp))
+
+            Text(
+                text = stringResource(R.string.no_generated_image),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xff747b82),
+                fontWeight = FontWeight.Bold
+            )
+
+        }
     }
 }
 
@@ -271,7 +433,8 @@ private fun AdvancedOptions(
                 textStyle = MaterialTheme.typography.bodySmall,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    cursorColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 leadingIcon = {
                     IconButton(onClick = { /*TODO*/ },modifier = Modifier.size(24.dp)) {

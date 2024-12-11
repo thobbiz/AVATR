@@ -16,7 +16,7 @@ data class ImageToImageRequest(
 )
 
 data class StableDiffusionResponse(
-    @SerializedName("image") val image: String,
+    val image: String,
     @SerializedName("finish_reason") val finishReason: String,
-    @SerializedName("seed") val seed: Int
+    val seed: Long
 )

@@ -7,20 +7,17 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,10 +28,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
+import com.example.avatr.ui.components.CustomButton2
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.CustomTopAppBar
 
@@ -116,6 +113,7 @@ private fun FirstColumn() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SecondColumn() {
     Column(
@@ -134,34 +132,6 @@ private fun SecondColumn() {
             Icon(painterResource(R.drawable.remove_collections), contentDescription = "remove from collection", tint = MaterialTheme.colorScheme.tertiary,  modifier = Modifier.size(24.dp))
             Text(text = "Remove from Collection", style = MaterialTheme.typography.labelSmall)
         }
-        Button(imageVector = ImageVector.vectorResource(R.drawable.save_icon), text = R.string.save_to_device)
-    }
-}
-
-
-@Composable
-private fun Button(imageVector: ImageVector, text: Int) {
-    androidx.compose.material3.Button(
-        onClick = { /* Handle click */ },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.onPrimary,
-            contentColor = MaterialTheme.colorScheme.primary
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
-        ) {
-
-            Icon(imageVector = imageVector, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            Text(stringResource(text), style = MaterialTheme.typography.labelSmall)
-
-        }
+        CustomButton2(imageVector = ImageVector.vectorResource(R.drawable.save_icon), text = R.string.save_to_device, action = {})
     }
 }

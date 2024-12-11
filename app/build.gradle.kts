@@ -50,11 +50,13 @@ android {
         jvmTarget = "1.8"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/io.netty.versions.properties"
         }
     }
 }
@@ -74,17 +76,14 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
 
+    implementation(libs.coil.compose)
+
     implementation(libs.retrofit)
     implementation (libs.converter.gson)
 
-//    implementation(libs.ktor.server.core)
-//    implementation(libs.ktor.server.netty)
-//    implementation(libs.ktor.server.content.negotiation)
-//    implementation(libs.ktor.serialization.gson)
-//    implementation(libs.ktor.client.core.v235)
-//    implementation(libs.ktor.client.cio)
-//    implementation(libs.ktor.client.content.negotiation)
-//    implementation(libs.ktor.serialization.gson)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

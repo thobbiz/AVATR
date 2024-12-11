@@ -1,5 +1,7 @@
 package com.example.avatr.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,7 +17,6 @@ import com.example.avatr.ui.screens.HomeScreen
 import com.example.avatr.ui.screens.SettingsScreen
 import kotlinx.coroutines.CoroutineScope
 
-
 enum class AvatrScreen {
     Home,
     Collections,
@@ -24,6 +25,7 @@ enum class AvatrScreen {
     Delete
 }
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun AvatrNavHost(
     navController: NavHostController,
@@ -40,195 +42,59 @@ fun AvatrNavHost(
             AvatrScreen.Home.name
         ) {
             HomeScreen(
-                navigateToHome = {
-                    navController.navigate(AvatrScreen.Home.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Home.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToCollections = {
-                    navController.navigate(AvatrScreen.Collections.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Collections.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-
-                navigateToSettings = {
-                    navController.navigate(AvatrScreen.Settings.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Settings.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                scope = scope,
+                navigateToHome = { navController.navigateTo(AvatrScreen.Home) },
+                navigateToCollections = { navController.navigateTo(AvatrScreen.Collections) },
+                navigateToSettings = { navController.navigateTo(AvatrScreen.Settings) },
                 drawerState = drawerState
             )
         }
-
         composable(route = AvatrScreen.Collections.name) {
             CollectionsScreen(
-                navigateToHome = {
-                    navController.navigate(AvatrScreen.Home.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Home.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToCollections = {
-                    navController.navigate(AvatrScreen.Collections.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Collections.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToSettings = {
-                    navController.navigate(AvatrScreen.Settings.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Settings.name) {
-                            inclusive = true
-                        }
-                    }
-                },
+                navigateToHome = { navController.navigateTo(AvatrScreen.Home) },
+                navigateToCollections = { navController.navigateTo(AvatrScreen.Collections) },
+                navigateToSettings = { navController.navigateTo(AvatrScreen.Settings) },
                 scope = scope,
                 drawerState = drawerState
             )
         }
-
         composable(route = AvatrScreen.Settings.name) {
             SettingsScreen(
-                navigateToHome = {
-                    navController.navigate(AvatrScreen.Home.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Home.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToCollections = {
-                    navController.navigate(AvatrScreen.Collections.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Collections.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToSettings = {
-                    navController.navigate(AvatrScreen.Settings.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Settings.name) {
-                            inclusive = true
-                        }
-                    }
-                },
+                navigateToHome = { navController.navigateTo(AvatrScreen.Home) },
+                navigateToCollections = { navController.navigateTo(AvatrScreen.Collections) },
+                navigateToSettings = { navController.navigateTo(AvatrScreen.Settings) },
                 scope = scope,
                 drawerState = drawerState,
-                navigateToExport = {
-                    navController.navigate(AvatrScreen.Export.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Export.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToDelete = {
-                    navController.navigate(AvatrScreen.Delete.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Delete.name) {
-                            inclusive = true
-                        }
-                    }
-                },
+                navigateToExport = { navController.navigateTo(AvatrScreen.Export) },
+                navigateToDelete = { navController.navigate(AvatrScreen.Delete) },
             )
         }
-
         composable(route = AvatrScreen.Export.name) {
             ExportAllScreen(
-                navigateToHome = {
-                    navController.navigate(AvatrScreen.Home.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Home.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToCollections = {
-                    navController.navigate(AvatrScreen.Collections.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Collections.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToSettings = {
-                    navController.navigate(AvatrScreen.Settings.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Settings.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-
+                navigateToHome = { navController.navigateTo(AvatrScreen.Home) },
+                navigateToCollections = { navController.navigateTo(AvatrScreen.Collections) },
+                navigateToSettings = { navController.navigateTo(AvatrScreen.Settings) },
                 navigateBack = {
                     navController.navigateUp()
                 }
             )
         }
-
         composable(route = AvatrScreen.Delete.name) {
             DeleteAllSavedArtScreen(
-                navigateToHome = {
-                    navController.navigate(AvatrScreen.Home.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Home.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToCollections = {
-                    navController.navigate(AvatrScreen.Collections.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Collections.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateToSettings = {
-                    navController.navigate(AvatrScreen.Settings.name) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(AvatrScreen.Settings.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-
+                navigateToHome = { navController.navigateTo(AvatrScreen.Home) },
+                navigateToCollections = { navController.navigateTo(AvatrScreen.Collections) },
+                navigateToSettings = { navController.navigateTo(AvatrScreen.Settings) },
                 navigateBack = {
                     navController.navigateUp()
                 }
             )
         }
+    }
+}
+
+fun NavHostController.navigateTo(screen: AvatrScreen) {
+    this.navigate(screen.name) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(screen.name) { inclusive = true }
     }
 }
