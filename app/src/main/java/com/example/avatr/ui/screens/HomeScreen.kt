@@ -2,9 +2,11 @@ package com.example.avatr.ui.screens
 
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -63,13 +65,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import androidx.compose.material3.Button
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.draw.rotate
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun HomeScreen(
@@ -81,6 +86,7 @@ fun HomeScreen(
    HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, drawerState = drawerState)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -95,12 +101,14 @@ private fun HomeBody(
     var promptText by rememberSaveable { mutableStateOf("") }
     var negativePromptText by rememberSaveable { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-    val isSheetOpen = remember {
-        derivedStateOf {
-            viewModel.homeScreenUiState is HomeScreenUiState.NoRequest
+    val isSheetOpen = remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
+    LaunchedEffect(viewModel.homeScreenUiState) {
+        if (viewModel.homeScreenUiState is HomeScreenUiState.Success) {
+            isSheetOpen.value = true
         }
     }
-    val sheetState = rememberModalBottomSheetState()
 
     Column(
         modifier = Modifier
@@ -144,46 +152,74 @@ private fun HomeBody(
         if(isSheetOpen.value) {
             ModalBottomSheet(
                 onDismissRequest = {
-                    scope.launch { sheetState.hide() }
+                    scope.launch {
+                        sheetState.hide()
+                    }
+                    isSheetOpen.value = false
                 },
                 sheetState = sheetState,
                 containerColor = MaterialTheme.colorScheme.primary
             )
             {
                 Column(
-                    modifier = Modifier.padding(25.dp),
+                    modifier = Modifier.padding(horizontal = 25.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(40.dp),
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(15.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
-                            verticalAlignment = Alignment.CenterVertically
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.Transparent
+                            ),
+                            onClick = {
+                                viewModel.savePhotoToCollection()
+                                scope.launch {
+                                    sheetState.hide()
+                                }
+                                isSheetOpen.value = false
+                            }
                         ) {
-                            Icon(
-                                painterResource(R.drawable.remove_collections),
-                                contentDescription = "remove from collection",
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Text(
-                                text = "Remove from Collection",
-                                style = MaterialTheme.typography.labelSmall
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.collections_icon),
+                                    contentDescription = "Save To Collection",
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Text(
+                                    text = "Save To Collection",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
                         }
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.twitter_icon),
-                                contentDescription = "twitter",
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(24.dp)
+
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.Transparent
                             )
-                            Text(text = stringResource(R.string.share_on_twitter), style = MaterialTheme.typography.labelSmall)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.twitter_icon),
+                                    contentDescription = "twitter",
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Text(
+                                    text = stringResource(R.string.share_on_twitter),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
                         }
                     }
                     Button(
@@ -195,6 +231,7 @@ private fun HomeBody(
                                     )
                                 }
                             }
+                            isSheetOpen.value = false
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -279,9 +316,6 @@ private fun ImageContainer(
     viewModel: HomeScreenViewModel,
     modifier: Modifier
 ) {
-
-
-
     when(viewModel.homeScreenUiState) {
         is HomeScreenUiState.NoRequest -> EmptyScreen()
         is HomeScreenUiState.Success -> SuccessScreen(viewModel, (viewModel.homeScreenUiState as HomeScreenUiState.Success).image)
@@ -343,6 +377,7 @@ private fun LoadingScreen(modifier: Modifier) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
+            CircularProgressIndicator()
             Text("Loading...", style = MaterialTheme.typography.bodyLarge)
         }
     }
@@ -392,6 +427,10 @@ private fun AdvancedOptions(
     var expanded by remember { mutableStateOf(false) }
     var isFocused by remember { mutableStateOf(false) }
 
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (expanded) 0f else 360f
+    )
+
     Column(
         modifier = Modifier
             .animateContentSize (
@@ -415,7 +454,7 @@ private fun AdvancedOptions(
                 color = MaterialTheme.colorScheme.tertiary
             )
 
-            IconButton(onClick = { expanded = !expanded}, Modifier.size(20.dp)) {
+            IconButton(onClick = { expanded = !expanded}, Modifier.size(20.dp).rotate(rotationAngle)) {
                 Icon(
                     imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = stringResource(R.string.advanced_options),

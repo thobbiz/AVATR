@@ -1,6 +1,5 @@
 package com.example.avatr.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,19 +13,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavHostController
 import com.example.avatr.R
+import com.example.avatr.ui.navigation.currentScreen
 
 @Composable
 fun CustomNavBar(
-    navController: NavController,
+    navController: NavHostController,
     navigateToHome: () -> Unit = {},
     navigateToCollections: () -> Unit = {},
     navigateToSettings: () -> Unit = {},
@@ -37,10 +35,7 @@ fun CustomNavBar(
         NavigationItem( "Settings", R.drawable.settings_icon, R.drawable.setting_icon_clicked, navigateToSettings)
     )
 
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = currentBackStackEntry?.destination?.route
-
-    Log.e("why", currentScreen.toString())
+    val currentScreen = currentScreen(navController = navController)
 
     Box(
         modifier = Modifier
@@ -49,7 +44,6 @@ fun CustomNavBar(
             .background(Color.Transparent), // Transparent background for the outer box
         contentAlignment = Alignment.Center
     ) {
-        // Pebble-like rounded background
         Surface(
             color = Color.Black,
             shape = RoundedCornerShape(30.dp), // Creates the rounded "pebble" effect
@@ -64,7 +58,7 @@ fun CustomNavBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { index, item ->
-                    val isSelected = item.label == currentBackStackEntry.toString()
+                    val isSelected = item.label == currentScreen.toString()
                     Icon(
                         painter = painterResource(
                             if (isSelected) item.iconClicked else item.icon

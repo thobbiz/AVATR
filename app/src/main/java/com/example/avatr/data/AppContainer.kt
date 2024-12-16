@@ -10,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 interface AppContainer {
     val stableDiffusionRepository: StableDiffusionRepository
     val imageRepository: ImageRepository
+    val savedPhotoRepository: SavedPhotosRepository
 }
 
 class DefaultAppContainer(private val context: Context): AppContainer {
@@ -42,5 +43,9 @@ class DefaultAppContainer(private val context: Context): AppContainer {
 
     override val imageRepository: ImageRepository by lazy {
         ImageRepository(context = context)
+    }
+
+    override val savedPhotoRepository: SavedPhotosRepository by lazy {
+        OfflineSavedPhotoRepository(SavedPhotosDatabase.getDatabase(context).savedPhotoDao())
     }
 }

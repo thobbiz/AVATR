@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -31,22 +32,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
+import com.example.avatr.data.SavedPhoto
 import com.example.avatr.ui.components.CustomButton2
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.CustomTopAppBar
+import com.example.avatr.ui.components.loadImageFromStorage
 
 @Composable
 fun SavedImageScreen(
+    savedPhoto: SavedPhoto,
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateBack: () -> Unit
 ) {
-    SavedImageBody(navigateToHome, navigateToCollections, navigateToSettings, navigateBack)
+    SavedImageBody(savedPhoto, navigateToHome, navigateToCollections, navigateToSettings, navigateBack)
 }
 
 @Composable
 private fun SavedImageBody(
+    savedPhoto: SavedPhoto,
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
     navigateToSettings: () -> Unit,
@@ -73,7 +78,7 @@ private fun SavedImageBody(
 
             CustomTopAppBar(title = R.string.saved_image, navigateBack = navigateBack)
 
-            FirstColumn()
+            FirstColumn(savedPhoto)
 
             HorizontalDivider(color = Color(0xffdfe0e0))
 
@@ -87,13 +92,15 @@ private fun SavedImageBody(
 }
 
 @Composable
-private fun FirstColumn() {
+private fun FirstColumn(
+    savedPhoto: SavedPhoto,
+) {
 
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
         horizontalAlignment = Alignment.Start
     ) {
-
+        val bitmap = loadImageFromStorage(savedPhoto.base64FilePath)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,19 +108,19 @@ private fun FirstColumn() {
                 .border(2.dp, Color.Transparent),
             shape = RoundedCornerShape(5.dp)
         ) {
-            Image(
-                painter = painterResource(R.drawable._4),
-                contentDescription = "Generated Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
+            if (bitmap != null) {
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = "Generated Image",
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
-        Text(text = "White Modern Cyborg Wearing a Helmet \nin a Dramatic Shot", style = MaterialTheme.typography.labelLarge)
-        Text(text = "Saved on: 16th April 2024", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+        Text(text = savedPhoto.prompt, style = MaterialTheme.typography.labelLarge)
+        Text(text = savedPhoto.date, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SecondColumn() {
     Column(
