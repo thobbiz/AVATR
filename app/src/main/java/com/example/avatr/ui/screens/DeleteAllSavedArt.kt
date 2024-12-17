@@ -28,22 +28,28 @@ import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.CustomTopAppBar
+import com.example.avatr.ui.navigation.NavigationDestination
+
+object DeleteAllSavedArtDestination : NavigationDestination {
+    override val route = "deleteAll"
+    override val titleRes = R.string.delete_saved_art
+}
 
 @Composable
 fun DeleteAllSavedArtScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit,
 ) {
-    DeleteAllSavedArtBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, navigateBack)
+    DeleteAllSavedArtBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, navigateBack)
 }
 
 @Composable
 private fun DeleteAllSavedArtBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     val navController = rememberNavController()
@@ -82,7 +88,7 @@ private fun DeleteAllSavedArtBody(
             }
         }
 
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
 
     }
 }

@@ -10,4 +10,6 @@ class OfflineSavedPhotoRepository(private val savedPhotoDao: SavedPhotoDao): Sav
     override suspend fun deleteSavedPhoto(savedPhoto: SavedPhoto) = savedPhotoDao.delete(savedPhoto)
 
     override suspend fun insertSavedPhoto(savedPhoto: SavedPhoto) = savedPhotoDao.insert(savedPhoto)
+
+    override fun searchByPrompt(prompt: String): Flow<SavedPhoto?> = savedPhotoDao.searchByPrompt(prompt)
 }

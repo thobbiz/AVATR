@@ -30,27 +30,33 @@ import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
+import com.example.avatr.ui.navigation.NavigationDestination
 import kotlinx.coroutines.CoroutineScope
+
+object PreferencesDestination : NavigationDestination {
+    override val route = "preferences"
+    override val titleRes = R.string.preferences
+}
 
 
 @Composable
-fun SettingsScreen(
+fun PreferencesScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     navigateToExport: () -> Unit,
     navigateToDelete: () -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
     ) {
-    SettingsBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, scope = scope, drawerState = drawerState, navigateToExport = navigateToExport, navigateToDelete = navigateToDelete)
+    PreferencesBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, scope = scope, drawerState = drawerState, navigateToExport = navigateToExport, navigateToDelete = navigateToDelete)
 }
 
 @Composable
-private fun SettingsBody(
+private fun PreferencesBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     navigateToExport: () -> Unit,
     navigateToDelete: () -> Unit,
     drawerState: DrawerState,
@@ -105,7 +111,7 @@ private fun SettingsBody(
                 )
             }
         }
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
     }
 }
 

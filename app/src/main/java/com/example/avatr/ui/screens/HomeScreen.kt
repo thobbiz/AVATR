@@ -70,9 +70,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.rotate
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
+import com.example.avatr.ui.navigation.NavigationDestination
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
+
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+    override val titleRes = R.string.app_name
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -80,10 +86,10 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     drawerState: DrawerState
 ) {
-   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, drawerState = drawerState)
+   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, drawerState = drawerState)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -93,7 +99,7 @@ fun HomeScreen(
 private fun HomeBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     drawerState: DrawerState
 ) {
     val viewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
@@ -146,7 +152,7 @@ private fun HomeBody(
                 onTextChange = { newText -> negativePromptText = newText }
             )
         }
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
 
         //Bottom Sheet
         if(isSheetOpen.value) {
@@ -304,7 +310,7 @@ private fun DescriptionTextField(
         modifier = Modifier
             .width(450.dp)
             .height(dimensionResource(R.dimen.button_height))
-            .border(2.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
+            .border(4.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
             .onFocusChanged { focusState -> isFocused = focusState.isFocused },
         enabled = true,
         singleLine = true

@@ -20,4 +20,7 @@ interface SavedPhotoDao {
 
     @Query("SELECT * from `Saved Photos` ORDER BY id DESC")
     fun getAllSavedPhotos(): Flow<List<SavedPhoto>>
+
+    @Query("SELECT * from `Saved Photos` WHERE prompt = :prompt")
+    fun searchByPrompt(prompt: String): Flow<SavedPhoto>
 }

@@ -20,22 +20,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.avatr.R
-import com.example.avatr.ui.navigation.currentScreen
 
 @Composable
 fun CustomNavBar(
     navController: NavHostController,
     navigateToHome: () -> Unit = {},
     navigateToCollections: () -> Unit = {},
-    navigateToSettings: () -> Unit = {},
+    navigateToPreferences: () -> Unit = {},
 ) {
     val items = listOf(
         NavigationItem( "Home", R.drawable.home_icon, R.drawable.home_icon_clicked, navigateToHome),
         NavigationItem( "Collections", R.drawable.collections_icon, R.drawable.collection_icon_clicked , navigateToCollections),
-        NavigationItem( "Settings", R.drawable.settings_icon, R.drawable.setting_icon_clicked, navigateToSettings)
+        NavigationItem( "Preferences", R.drawable.settings_icon, R.drawable.setting_icon_clicked, navigateToPreferences)
     )
-
-    val currentScreen = currentScreen(navController = navController)
 
     Box(
         modifier = Modifier
@@ -58,13 +55,12 @@ fun CustomNavBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { index, item ->
-                    val isSelected = item.label == currentScreen.toString()
                     Icon(
                         painter = painterResource(
-                            if (isSelected) item.iconClicked else item.icon
+                            item.icon
                         ),
                         contentDescription = item.label,
-                        tint = if (isSelected) Color.White else Color.Gray,
+                        tint = Color.Gray,
                         modifier = Modifier
                             .padding(4.dp)
                             .clickable {

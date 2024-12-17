@@ -27,22 +27,28 @@ import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.CustomTopAppBar
+import com.example.avatr.ui.navigation.NavigationDestination
+
+object ExportAllSavedArtDestination : NavigationDestination {
+    override val route = "exportAll"
+    override val titleRes = R.string.export_saved_art
+}
 
 @Composable
 fun ExportAllScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit
 ) {
-    ExportAllBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToSettings = navigateToSettings, navigateBack)
+    ExportAllBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, navigateBack)
 }
 
 @Composable
 private fun ExportAllBody(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -80,7 +86,7 @@ private fun ExportAllBody(
             }
         }
 
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
 
     }
 }

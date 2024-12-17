@@ -22,6 +22,7 @@ import com.example.avatr.data.SavedPhoto
 import com.example.avatr.data.SavedPhotosRepository
 import com.example.avatr.data.StableDiffusionRepository
 import com.example.avatr.ui.AvatrApplication
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -81,25 +82,29 @@ class HomeScreenViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun savePhotoToCollection() {
-        val prompt = latestPrompt
-        val base64 = latestGeneratedImage
-        if(prompt != null && base64 != null) {
-            viewModelScope.launch {
-                val savedPhoto = SavedPhoto(
-                    prompt = prompt,
-                    base64FilePath = saveImageToStorage(context = getApplication(), bitmap = convertBase64ToBitmap(base64), prompt = prompt),
-                    date = displayDate(),
-                    id = 0
-                )
-                savedPhotosRepository.insertSavedPhoto(savedPhoto)
+        CoroutineScope(Dispatchers.IO).launch {
+            val prompt = latestPrompt
+            val base64 = latestGeneratedImage
+            if(prompt != null && base64 != null) {
+                viewModelScope.launch {
+                    val savedPhoto = SavedPhoto(
+                        prompt = prompt,
+                        base64FilePath = saveImageToStorage(context = getApplication(), bitmap = convertBase64ToBitmap(base64), prompt = prompt),
+                        date = displayDate(),
+                        id = 0
+                    )
+                    savedPhotosRepository.insertSavedPhoto(savedPhoto)
+                }
             }
         }
     }
 
     fun saveImageToGallery(bitmapString: String) {
-        val bitmap = convertBase64ToBitmap(bitmapString)
-        viewModelScope.launch {
-            imageRepository.SaveImageToGallery(bitmap)
+        CoroutineScope(Dispatchers.IO).launch {
+            val bitmap = convertBase64ToBitmap(bitmapString)
+            viewModelScope.launch {
+                imageRepository.SaveImageToGallery(bitmap)
+            }
         }
     }
 

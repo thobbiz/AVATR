@@ -10,4 +10,6 @@ interface SavedPhotosRepository {
     fun getAllSavedPhoto(): Flow<List<SavedPhoto>>
 
     suspend fun deleteSavedPhoto(savedPhoto: SavedPhoto)
+
+    fun searchByPrompt(prompt: String): Flow<SavedPhoto?>
 }

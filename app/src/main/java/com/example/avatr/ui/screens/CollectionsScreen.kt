@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
@@ -29,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,14 +47,21 @@ import com.example.avatr.ui.AvatrViewModelProvider
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.loadImageFromStorage
+import com.example.avatr.ui.navigation.NavigationDestination
 import com.example.avatr.ui.viewmodels.CollectionsScreenViewModel
 import kotlinx.coroutines.CoroutineScope
+
+object CollectionsDestination : NavigationDestination {
+    override val route = "collections"
+    override val titleRes = R.string.collections
+}
 
 @Composable
 fun CollectionsScreen(
     navigateToHome: () -> Unit,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
+    navigateToSavedImage: (Int) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
     viewModel: CollectionsScreenViewModel = viewModel(factory = AvatrViewModelProvider.Factory)
@@ -65,10 +72,11 @@ fun CollectionsScreen(
     CollectionsBody(
         navigateToHome = navigateToHome,
         navigateToCollections = navigateToCollections,
-        navigateToSettings = navigateToSettings,
+        navigateToPreferences = navigateToPreferences,
         drawerState = drawerState,
         scope = scope,
         savedPhotosList = collectionsUiState.savedPhotosList,
+        navigateToSavedImage = navigateToSavedImage
     )
 }
 
@@ -77,7 +85,8 @@ private fun CollectionsBody(
     navigateToHome: () -> Unit,
     savedPhotosList: List<SavedPhoto>,
     navigateToCollections: () -> Unit,
-    navigateToSettings: () -> Unit,
+    navigateToPreferences: () -> Unit,
+    navigateToSavedImage: (Int) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
@@ -115,11 +124,11 @@ private fun CollectionsBody(
                     color = Color(0xff747b82)
                 )
 
-                SavedPhotosList(savedPhotosList = savedPhotosList, onSavedPhotoClick = {})
+                SavedPhotosList(savedPhotosList = savedPhotosList, onSavedPhotoClick = navigateToSavedImage)
             }
         }
 
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToSettings)
+        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
     }
 }
 
@@ -162,13 +171,13 @@ private fun SavedPhotosList(
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
                     modifier = Modifier
-                        .clickable { onSavedPhotoClick(index) }
+                        .clickable { onSavedPhotoClick(savedPhoto.id) }
                         .border(
-                            0.dp,
+                            1.5.dp,
                             MaterialTheme.colorScheme.outlineVariant,
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .padding(4.dp),
+                        .padding(4.dp).clip(RoundedCornerShape(8.dp)),
                     shape = RoundedCornerShape(8.dp),
                 ) {
                     Column(
