@@ -15,7 +15,7 @@ interface AppContainer {
 
 class DefaultAppContainer(private val context: Context): AppContainer {
 
-    private val BASE_URL = "https://api.stability.ai/"
+    private val baseUrl = "https://api.stability.ai/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -30,7 +30,7 @@ class DefaultAppContainer(private val context: Context): AppContainer {
 
     private val retrofitService: StableDiffusionApi by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

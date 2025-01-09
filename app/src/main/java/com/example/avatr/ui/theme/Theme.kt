@@ -26,7 +26,8 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = light_onTertiary,
     onSecondary = dark_on_secondary,
     outlineVariant = dark_image_border,
-    tertiaryContainer = dark_icon_collection
+    tertiaryContainer = dark_icon_collection,
+    onSurfaceVariant = dark_horizontal_divider
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -39,7 +40,8 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = dark_onTertiary,
     onSecondary = light_on_secondary,
     outlineVariant = light_image_border,
-    tertiaryContainer = light_icon_collection
+    tertiaryContainer = light_icon_collection,
+    onSurfaceVariant = light_horizontal_divider
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

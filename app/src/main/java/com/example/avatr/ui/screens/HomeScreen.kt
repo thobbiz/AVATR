@@ -1,7 +1,9 @@
 package com.example.avatr.ui.screens
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.animateContentSize
@@ -9,6 +11,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -62,34 +65,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import com.example.avatr.ui.components.CustomHeader
-import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.navigation.NavigationDestination
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.home
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun HomeScreen(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     drawerState: DrawerState
 ) {
-   HomeBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, drawerState = drawerState)
+   HomeBody(drawerState = drawerState)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -97,18 +99,15 @@ fun HomeScreen(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 private fun HomeBody(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     drawerState: DrawerState
 ) {
     val viewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
-    val navController = rememberNavController()
     var promptText by rememberSaveable { mutableStateOf("") }
     var negativePromptText by rememberSaveable { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     val isSheetOpen = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel.homeScreenUiState) {
         if (viewModel.homeScreenUiState is HomeScreenUiState.Success) {
@@ -119,22 +118,25 @@ private fun HomeBody(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.large_padding)),
+            .background(MaterialTheme.colorScheme.primary),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f)
-                .padding(top = 16.dp),
+                .fillMaxHeight()
+                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
             CustomHeader(scope = scope, headerText = R.string.home_screen_header, drawerState = drawerState)
-            ImageContainer(viewModel, modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.6f))
+            ImageContainer(
+                viewModel,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f),
+            )
 
             DescriptionTextField(
                 text = promptText,
@@ -151,112 +153,9 @@ private fun HomeBody(
                 text = negativePromptText,
                 onTextChange = { newText -> negativePromptText = newText }
             )
-        }
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
 
-        //Bottom Sheet
-        if(isSheetOpen.value) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    scope.launch {
-                        sheetState.hide()
-                    }
-                    isSheetOpen.value = false
-                },
-                sheetState = sheetState,
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-            {
-                Column(
-                    modifier = Modifier.padding(horizontal = 25.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(40.dp),
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(15.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.Transparent
-                            ),
-                            onClick = {
-                                viewModel.savePhotoToCollection()
-                                scope.launch {
-                                    sheetState.hide()
-                                }
-                                isSheetOpen.value = false
-                            }
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.collections_icon),
-                                    contentDescription = "Save To Collection",
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Text(
-                                    text = "Save To Collection",
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                        }
-
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.Transparent
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.twitter_icon),
-                                    contentDescription = "twitter",
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Text(
-                                    text = stringResource(R.string.share_on_twitter),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                        }
-                    }
-                    Button(
-                        onClick = {
-                            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    viewModel.saveImageToGallery(
-                                        (viewModel.homeScreenUiState as HomeScreenUiState.Success).image
-                                    )
-                                }
-                            }
-                            isSheetOpen.value = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(45.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimary,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
-                        ) {
-                            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.save_icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                            Text(stringResource(R.string.save_to_device), style = MaterialTheme.typography.labelSmall)
-                        }
-                    }
-                }
+            if(isSheetOpen.value) {
+                BottomSheet(context = context, sheetState = sheetState, scope = scope, viewModel = viewModel, isSheetOpen = isSheetOpen)
             }
         }
     }
@@ -320,7 +219,7 @@ private fun DescriptionTextField(
 @Composable
 private fun ImageContainer(
     viewModel: HomeScreenViewModel,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     when(viewModel.homeScreenUiState) {
         is HomeScreenUiState.NoRequest -> EmptyScreen()
@@ -340,37 +239,23 @@ private fun SuccessScreen(viewModel: HomeScreenViewModel, image: String) {
             .fillMaxHeight(0.6f),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        val bitmap = viewModel.convertBase64ToBitmap(image)
-        Image(
-            bitmap = bitmap.asImageBitmap(),
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-
-@Composable
-private fun ErrorScreen(modifier: Modifier, error: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-            .fillMaxHeight(0.6f),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text( error, style = MaterialTheme.typography.bodyLarge)
+        val bitmap = viewModel.decodeImage(image)
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
         }
     }
 }
 
 @Composable
-private fun LoadingScreen(modifier: Modifier) {
+private fun ErrorScreen(
+    modifier: Modifier = Modifier,
+    error: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -383,8 +268,30 @@ private fun LoadingScreen(modifier: Modifier) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            CircularProgressIndicator()
-            Text("Loading...", style = MaterialTheme.typography.bodyLarge)
+            Text(error, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+        }
+    }
+}
+
+@Composable
+private fun LoadingScreen(modifier: Modifier = Modifier) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .fillMaxHeight(0.6f),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(30.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 4.dp
+            )
         }
     }
 }
@@ -434,7 +341,7 @@ private fun AdvancedOptions(
     var isFocused by remember { mutableStateOf(false) }
 
     val rotationAngle by animateFloatAsState(
-        targetValue = if (expanded) 0f else 360f
+        targetValue = if (expanded) -0f else 180f, label = ""
     )
 
     Column(
@@ -460,9 +367,12 @@ private fun AdvancedOptions(
                 color = MaterialTheme.colorScheme.tertiary
             )
 
-            IconButton(onClick = { expanded = !expanded}, Modifier.size(20.dp).rotate(rotationAngle)) {
+            IconButton(onClick = { expanded = !expanded},
+                Modifier
+                    .size(20.dp)
+                    .rotate(rotationAngle)) {
                 Icon(
-                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    imageVector = Icons.Filled.KeyboardArrowUp,
                     contentDescription = stringResource(R.string.advanced_options),
                     tint = Color(0xff494d5a)
                 )
@@ -498,6 +408,121 @@ private fun AdvancedOptions(
                 enabled = true,
                 singleLine = true
             )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BottomSheet(
+    context: Context,
+    sheetState: SheetState,
+    scope: CoroutineScope,
+    viewModel: HomeScreenViewModel,
+    isSheetOpen: MutableState<Boolean>
+) {
+    ModalBottomSheet(
+        onDismissRequest = {
+            scope.launch {
+                sheetState.hide()
+            }
+            isSheetOpen.value = false
+        },
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.primary
+    )
+    {
+        Column(
+            modifier = Modifier.padding(horizontal = 25.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp),
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    ),
+                    onClick = {
+                        viewModel.savePhotoToCollection()
+                        scope.launch {
+                            sheetState.hide()
+                        }
+                        Toast.makeText(context, "Saved to Collection!", Toast.LENGTH_SHORT).show()
+                        isSheetOpen.value = false
+                    }
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.collections_icon),
+                            contentDescription = "Save To Collection",
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "Save To Collection",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.twitter_icon),
+                            contentDescription = "twitter",
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.share_on_twitter),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+            }
+            Button(
+                onClick = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            viewModel.saveImageToGallery(
+                                (viewModel.homeScreenUiState as HomeScreenUiState.Success).image
+                            )
+                        }
+                    }
+                    Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+                    isSheetOpen.value = false
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
+                ) {
+                    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.save_icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                    Text(stringResource(R.string.save_to_device), style = MaterialTheme.typography.labelSmall)
+                }
+            }
         }
     }
 }

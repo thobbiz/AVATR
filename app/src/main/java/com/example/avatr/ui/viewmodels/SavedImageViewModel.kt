@@ -1,8 +1,5 @@
 package com.example.avatr.ui.viewmodels
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -50,7 +47,7 @@ class SavedImageViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             viewModelScope.launch {
                 if (bitmap != null) {
-                    imageRepository.SaveImageToGallery(bitmap)
+                    imageRepository.saveImageToGallery(bitmap)
                 }
             }
         }

@@ -1,12 +1,13 @@
 package com.example.avatr.ui.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
@@ -33,11 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,7 +46,7 @@ import com.example.avatr.R
 import com.example.avatr.data.SavedPhoto
 import com.example.avatr.ui.AvatrViewModelProvider
 import com.example.avatr.ui.components.CustomButton2
-import com.example.avatr.ui.components.CustomNavBar
+
 import com.example.avatr.ui.components.CustomTopAppBar
 import com.example.avatr.ui.components.loadImageFromStorage
 import com.example.avatr.ui.navigation.NavigationDestination
@@ -62,30 +63,23 @@ object SavedImageDestination : NavigationDestination {
 
 @Composable
 fun SavedImageScreen(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit
 ) {
-    SavedImageBody(navigateToHome, navigateToCollections, navigateToPreferences, navigateBack)
+    SavedImageBody(navigateBack)
 }
 
 @Composable
 private fun SavedImageBody(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit,
     viewModel: SavedImageViewModel = viewModel(factory = AvatrViewModelProvider.Factory)
 ) {
-    val navController = rememberNavController()
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.large_padding)),
+            .background(MaterialTheme.colorScheme.primary),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -94,28 +88,25 @@ private fun SavedImageBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.9f)
-                .padding(top = 16.dp),
+                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-
             CustomTopAppBar(title = R.string.saved_image, navigateBack = navigateBack)
-
             FirstColumn(uiState.value.savedPhotoDetails.toSavedPhoto())
-
-            HorizontalDivider(color = Color(0xffdfe0e0))
-
-
-            SecondColumn(viewModel = viewModel, savedPhoto = uiState.value.savedPhotoDetails.toSavedPhoto(), onDeleteConfirm = {
-                coroutineScope.launch {
-                    viewModel.deleteSavedPhoto()
-                    navigateBack()
-                }
-            })
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            SecondColumn(
+                viewModel = viewModel,
+                savedPhoto = uiState.value.savedPhotoDetails.toSavedPhoto(),
+                onDeleteConfirm = {
+                    coroutineScope.launch {
+                        viewModel.deleteSavedPhoto()
+                        navigateBack()
+                    }
+                                  },
+                context = LocalContext.current
+            )
         }
-
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
-
     }
 }
 
@@ -147,7 +138,7 @@ private fun FirstColumn(
             }
         }
         Text(text = savedPhoto.prompt, style = MaterialTheme.typography.labelLarge)
-        Text(text = savedPhoto.date, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+        Text(text = "Saved on: ${savedPhoto.date}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
     }
 }
 
@@ -155,42 +146,41 @@ private fun FirstColumn(
 private fun SecondColumn(
     savedPhoto: SavedPhoto,
     onDeleteConfirm: () -> Unit,
-    viewModel: SavedImageViewModel
+    viewModel: SavedImageViewModel,
+    context: Context
 ) {
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-
     Column(
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        Card(onClick = { /*TODO*/ }, colors = CardDefaults.cardColors(containerColor = Color.Transparent), modifier = Modifier.padding(0.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Icon(painterResource(R.drawable.twitter_icon), contentDescription = "twitter", tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(24.dp))
-                Text(text = "Share on Twitter", style = MaterialTheme.typography.labelSmall)
-            }
-        }
-        Card(onClick = { deleteConfirmationRequired = true }, colors = CardDefaults.cardColors(containerColor = Color.Transparent), modifier = Modifier.padding(0.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(painterResource(R.drawable.remove_collections), contentDescription = "remove from collection", tint = MaterialTheme.colorScheme.tertiary,  modifier = Modifier.size(24.dp))
-                Text(text = "Remove from Collection", style = MaterialTheme.typography.labelSmall)
-            }
-        }
-        CustomButton2(imageVector = ImageVector.vectorResource(R.drawable.save_icon), text = R.string.save_to_device, action = {viewModel.saveImageToGallery(savedPhoto.base64FilePath)})
-    }
+        SavedImageFunction(
+            text = R.string.share_on_twitter,
+            icon = R.drawable.twitter_icon,
+            action = {})
 
-    if(deleteConfirmationRequired) {
-        DeleteConfirmationDialog(
-            onDeleteConfirm = {
-                deleteConfirmationRequired = false
-                onDeleteConfirm()
-            },
-            onDeleteCancel = { deleteConfirmationRequired = false })
+        SavedImageFunction(
+            text = R.string.remove_from_collection,
+            icon = R.drawable.remove_collections,
+            action = { deleteConfirmationRequired = true })
+
+        CustomButton2(
+            imageVector = ImageVector.vectorResource(R.drawable.save_icon),
+            text = R.string.save_to_device,
+            action = {
+                viewModel.saveImageToGallery(savedPhoto.base64FilePath)
+                Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+            })
+
+        if (deleteConfirmationRequired) {
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmationRequired = false
+                    onDeleteConfirm()
+                    Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
+                },
+                onDeleteCancel = { deleteConfirmationRequired = false })
+        }
     }
 }
 
@@ -215,4 +205,17 @@ private fun DeleteConfirmationDialog(
                 Text("Yes", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         })
+}
+
+@Composable
+private fun SavedImageFunction(text: Int, icon: Int, action: () -> Unit) {
+    Card(onClick = action, colors = CardDefaults.cardColors(containerColor = Color.Transparent), modifier = Modifier.padding(0.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(painterResource(icon), contentDescription = "remove from collection", tint = MaterialTheme.colorScheme.tertiary,  modifier = Modifier.size(24.dp))
+            Text(text = stringResource(text), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondary)
+        }
+    }
 }

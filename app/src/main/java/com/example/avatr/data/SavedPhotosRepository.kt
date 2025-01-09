@@ -11,5 +11,7 @@ interface SavedPhotosRepository {
 
     suspend fun deleteSavedPhoto(savedPhoto: SavedPhoto)
 
+    suspend fun deleteAllSavedPhoto()
+
     fun searchByPrompt(prompt: String): Flow<SavedPhoto?>
 }

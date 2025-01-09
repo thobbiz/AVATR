@@ -4,6 +4,8 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,6 +14,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -38,13 +41,13 @@ import kotlinx.coroutines.CoroutineScope
 fun AvatrNavHost(
     navController: NavHostController,
     drawerState: DrawerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    modifier: Modifier = Modifier,
 ) {
+
     NavHost(
-        startDestination =HomeDestination.route,
+        startDestination = HomeDestination.route,
         navController = navController,
-        enterTransition = { fadeIn(tween(500)) },
-        exitTransition = { fadeOut(tween(500)) }
     ) {
         composable(
             HomeDestination.route,
@@ -56,9 +59,6 @@ fun AvatrNavHost(
             }
             ) {
             HomeScreen(
-                navigateToHome = { navController.navigateTo(HomeDestination) },
-                navigateToCollections = { navController.navigateTo(CollectionsDestination) },
-                navigateToPreferences = { navController.navigateTo(PreferencesDestination) },
                 drawerState = drawerState
             )
         }
@@ -72,12 +72,8 @@ fun AvatrNavHost(
             }
         ) {
             CollectionsScreen(
-                navigateToHome = { navController.navigateTo(HomeDestination) },
-                navigateToCollections = { navController.navigateTo(CollectionsDestination) },
-                navigateToPreferences = { navController.navigateTo(PreferencesDestination) },
                 navigateToSavedImage = {
                     navController.navigate("${SavedImageDestination.route}/$it")
-                    Log.d("SavedImage", "Navigating with ID: $it")
                 },
                 scope = scope,
                 drawerState = drawerState
@@ -93,11 +89,8 @@ fun AvatrNavHost(
             }
         ) {
             PreferencesScreen(
-                navigateToHome = { navController.navigateTo(HomeDestination) },
-                navigateToCollections = { navController.navigateTo(CollectionsDestination) },
-                navigateToPreferences = { navController.navigateTo(PreferencesDestination) },
-                navigateToExport = { /*TODO*/ },
-                navigateToDelete = { /*TODO*/ },
+                navigateToExport = { navController.navigateTo(ExportAllSavedArtDestination) },
+                navigateToDelete = { navController.navigateTo(DeleteAllSavedArtDestination) },
                 drawerState = drawerState,
                 scope = scope
             )
@@ -105,16 +98,35 @@ fun AvatrNavHost(
         composable(
             route = ExportAllSavedArtDestination.route,
             enterTransition = {
-                slideInVertically(initialOffsetY = { 300 }) + fadeIn()
+                slideInVertically(
+                    initialOffsetY = { it / 2 },
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
             },
             exitTransition = {
-                slideOutVertically(targetOffsetY = { -300 }) + fadeOut()
+                slideOutVertically(
+                    targetOffsetY = { it / 2 },
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
             }
         ) {
             ExportAllScreen(
-                navigateToHome = { navController.navigateTo(HomeDestination) },
-                navigateToCollections = { navController.navigateTo(CollectionsDestination) },
-                navigateToPreferences = { navController.navigateTo(PreferencesDestination) },
                 navigateBack = {
                     navController.navigateUp()
                 }
@@ -123,16 +135,35 @@ fun AvatrNavHost(
         composable(
             route = DeleteAllSavedArtDestination.route,
             enterTransition = {
-                slideInVertically(initialOffsetY = { 300 }) + fadeIn()
+                slideInVertically(
+                    initialOffsetY = { it / 2 },
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
             },
             exitTransition = {
-                slideOutVertically(targetOffsetY = { -300 }) + fadeOut()
+                slideOutVertically(
+                    targetOffsetY = { it / 2 },
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
             }
             ) {
             DeleteAllSavedArtScreen(
-                navigateToHome = { navController.navigateTo(HomeDestination) },
-                navigateToCollections = { navController.navigateTo(CollectionsDestination) },
-                navigateToPreferences = { navController.navigateTo(PreferencesDestination) },
                 navigateBack = {
                     navController.navigateUp()
                 }
@@ -142,19 +173,38 @@ fun AvatrNavHost(
         composable(
             route = SavedImageDestination.routeWithArgs,
             enterTransition = {
-                slideInVertically(initialOffsetY = { 300 }) + fadeIn()
+                slideInVertically(
+                    initialOffsetY = { it / 2 },
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
             },
             exitTransition = {
-                slideOutVertically(targetOffsetY = { -300 }) + fadeOut()
+                slideOutVertically(
+                    targetOffsetY = { it / 2 },
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
             },
             arguments = listOf(navArgument(SavedImageDestination.savedPhotoIdArg) {
                 type = NavType.IntType
             })
         ) {
             SavedImageScreen(
-                navigateToHome = { navController.navigateTo(HomeDestination) },
-                navigateToCollections = { navController.navigateTo(CollectionsDestination) },
-                navigateToPreferences = { navController.navigateTo(PreferencesDestination) },
                 navigateBack = {
                     navController.navigateUp()
                 }
@@ -166,7 +216,19 @@ fun AvatrNavHost(
 fun NavHostController.navigateTo(navigationDestination: NavigationDestination) {
     this.navigate(navigationDestination.route) {
         launchSingleTop = true
-        popUpTo(navigationDestination.route) { inclusive = true }
-        restoreState = true
+//        graph.startDestinationRoute?.let {
+//            popUpTo(it) {
+//                inclusive = false
+//                saveState = true
+//            }
+//        }
+//        restoreState = true
     }
+}
+
+
+@Composable
+fun NavHostController.currentScreen(): String? {
+    val navBackStackEntry by currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }

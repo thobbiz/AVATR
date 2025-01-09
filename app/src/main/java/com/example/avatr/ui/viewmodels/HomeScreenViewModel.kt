@@ -100,29 +100,38 @@ class HomeScreenViewModel(
     }
 
     fun saveImageToGallery(bitmapString: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val bitmap = convertBase64ToBitmap(bitmapString)
-            viewModelScope.launch {
-                imageRepository.SaveImageToGallery(bitmap)
+            imageRepository.saveImageToGallery(bitmap)
+        }
+    }
+
+    private suspend fun saveImageToStorage(context: Context, bitmap: Bitmap, prompt: String): String {
+        return withContext(Dispatchers.IO) {
+            val directory = File(context.filesDir, "images")
+            if (!directory.exists()) {
+                directory.mkdirs()
             }
+            val file = File(directory, "${prompt}_${System.currentTimeMillis()}.jpg")
+            FileOutputStream(file).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            }
+            file.absolutePath
         }
     }
 
-    private fun saveImageToStorage(context: Context, bitmap: Bitmap, prompt: String): String {
-        val directory = File(context.filesDir, "images")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        val file = File(directory, "${prompt}_${System.currentTimeMillis()}.jpg")
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-        }
-        return file.absolutePath
-    }
-
-    fun convertBase64ToBitmap(base64String: String): Bitmap {
+    private suspend fun convertBase64ToBitmap(base64String: String): Bitmap = withContext(Dispatchers.Default) {
         val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
+    fun decodeImage(image: String): Bitmap? {
+        var bitmap: Bitmap? = null
+        viewModelScope.launch {
+            bitmap = convertBase64ToBitmap(image)
+        }
+
+        return bitmap
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

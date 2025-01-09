@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class CollectionsScreenViewModel (savedPhotosRepository: SavedPhotosRepository): ViewModel() {
     companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
+        private const val TIMEOUT_MILLIS = 2_000L
     }
 
     val collectionsUiState: StateFlow<CollectionsUiState> = savedPhotosRepository.getAllSavedPhoto().map { CollectionsUiState(it) }

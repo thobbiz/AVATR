@@ -23,4 +23,7 @@ interface SavedPhotoDao {
 
     @Query("SELECT * from `Saved Photos` WHERE prompt = :prompt")
     fun searchByPrompt(prompt: String): Flow<SavedPhoto>
+
+    @Query("DELETE FROM `Saved Photos`")
+    suspend fun deleteAllSavedArt()
 }

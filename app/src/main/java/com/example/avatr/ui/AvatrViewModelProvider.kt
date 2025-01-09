@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.avatr.ui.viewmodels.CollectionsScreenViewModel
+import com.example.avatr.ui.viewmodels.DeleteAllSavedArtViewModel
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import com.example.avatr.ui.viewmodels.SavedImageViewModel
 
@@ -29,6 +30,12 @@ object AvatrViewModelProvider {
                 this.createSavedStateHandle(),
                 avatrApplication().container.savedPhotoRepository,
                 avatrApplication().container.imageRepository
+            )
+        }
+
+        initializer {
+            DeleteAllSavedArtViewModel(
+                avatrApplication().container.savedPhotoRepository
             )
         }
     }

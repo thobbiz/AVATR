@@ -36,7 +36,7 @@ fun CustomTopAppBar(
             .wrapContentHeight()
             .padding(top = dimensionResource(R.dimen.small_padding)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Box(
             modifier = Modifier

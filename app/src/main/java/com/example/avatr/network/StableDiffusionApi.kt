@@ -1,12 +1,8 @@
 package com.example.avatr.network
 
 import com.example.avatr.BuildConfig
-import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -37,29 +33,4 @@ interface StableDiffusionApi {
         @Part("mode") mode: RequestBody? = "image-to-image".toRequestBody(),
         @Part("strength") strength: RequestBody? = "0".toRequestBody()
     ): StableDiffusionResponse
-}
-
-object RetrofitClient {
-    private const val BASE_URL = "https://api.stability.ai/"
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS) // Increase connect timeout
-        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS) // Increase read timeout
-        .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-        .build()
-
-
-    val instance: StableDiffusionApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(StableDiffusionApi::class.java)
-    }
 }

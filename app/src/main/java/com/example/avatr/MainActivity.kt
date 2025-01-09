@@ -12,10 +12,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.avatr.ui.screens.SideMenuScreen
+import com.example.avatr.ui.screens.MainScreen
 import com.example.avatr.ui.theme.AvatrTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,9 +26,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         enableEdgeToEdge()
         setContent {
-
             val darkTheme = mutableStateOf(isSystemInDarkTheme())
-
             AvatrTheme{
 //                val images1 = listOf(
 //                    R.drawable._1,
@@ -42,7 +39,7 @@ class MainActivity : ComponentActivity() {
 //                    R.drawable._5
 //                )
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    SideMenuScreen(isDarkTheme = darkTheme)
+                    MainScreen(isDarkTheme = darkTheme)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.avatr.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,9 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
-import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.CustomTopAppBar
 import com.example.avatr.ui.navigation.NavigationDestination
 
@@ -36,27 +35,20 @@ object ExportAllSavedArtDestination : NavigationDestination {
 
 @Composable
 fun ExportAllScreen(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit
 ) {
-    ExportAllBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, navigateBack)
+    ExportAllBody(navigateBack)
 }
 
 @Composable
 private fun ExportAllBody(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateBack: () -> Unit
 ) {
-    val navController = rememberNavController()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.large_padding)),
+            .background(MaterialTheme.colorScheme.primary),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -65,7 +57,7 @@ private fun ExportAllBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.9f)
-                .padding(top = 16.dp),
+                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.extra_large_padding))
         ) {
@@ -85,9 +77,6 @@ private fun ExportAllBody(
                 Button(imageVector = ImageVector.vectorResource(R.drawable.save_icon), text = R.string.export_as_zip)
             }
         }
-
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
-
     }
 }
 

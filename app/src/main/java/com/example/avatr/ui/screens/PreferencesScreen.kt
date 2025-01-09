@@ -1,5 +1,6 @@
 package com.example.avatr.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,10 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomHeader
-import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.navigation.NavigationDestination
 import kotlinx.coroutines.CoroutineScope
 
@@ -41,41 +40,33 @@ object PreferencesDestination : NavigationDestination {
 
 @Composable
 fun PreferencesScreen(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateToExport: () -> Unit,
     navigateToDelete: () -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
     ) {
-    PreferencesBody(navigateToHome = navigateToHome, navigateToCollections = navigateToCollections, navigateToPreferences = navigateToPreferences, scope = scope, drawerState = drawerState, navigateToExport = navigateToExport, navigateToDelete = navigateToDelete)
+    PreferencesBody(scope = scope, drawerState = drawerState, navigateToExport = navigateToExport, navigateToDelete = navigateToDelete)
 }
 
 @Composable
 private fun PreferencesBody(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateToExport: () -> Unit,
     navigateToDelete: () -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
-    val navController = rememberNavController()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.large_padding)),
+            .background(MaterialTheme.colorScheme.primary),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f)
-                .padding(top = 16.dp),
+                .fillMaxHeight()
+                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
@@ -111,7 +102,6 @@ private fun PreferencesBody(
                 )
             }
         }
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
     }
 }
 

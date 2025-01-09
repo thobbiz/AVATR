@@ -13,7 +13,7 @@ import java.io.IOException
 class ImageRepository(private val context: Context) {
     private val title = "Generated Image"
 
-    suspend fun SaveImageToGallery(bitmap: Bitmap): Uri? {
+    suspend fun saveImageToGallery(bitmap: Bitmap): Uri? {
         return withContext(Dispatchers.IO) {
             val contentResolver = context.contentResolver
 

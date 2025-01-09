@@ -1,6 +1,7 @@
 package com.example.avatr.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,12 +41,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.avatr.R
 import com.example.avatr.data.SavedPhoto
 import com.example.avatr.ui.AvatrViewModelProvider
 import com.example.avatr.ui.components.CustomHeader
-import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.loadImageFromStorage
 import com.example.avatr.ui.navigation.NavigationDestination
 import com.example.avatr.ui.viewmodels.CollectionsScreenViewModel
@@ -58,9 +57,6 @@ object CollectionsDestination : NavigationDestination {
 
 @Composable
 fun CollectionsScreen(
-    navigateToHome: () -> Unit,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateToSavedImage: (Int) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
@@ -70,9 +66,6 @@ fun CollectionsScreen(
     val collectionsUiState by viewModel.collectionsUiState.collectAsState()
 
     CollectionsBody(
-        navigateToHome = navigateToHome,
-        navigateToCollections = navigateToCollections,
-        navigateToPreferences = navigateToPreferences,
         drawerState = drawerState,
         scope = scope,
         savedPhotosList = collectionsUiState.savedPhotosList,
@@ -82,20 +75,15 @@ fun CollectionsScreen(
 
 @Composable
 private fun CollectionsBody(
-    navigateToHome: () -> Unit,
     savedPhotosList: List<SavedPhoto>,
-    navigateToCollections: () -> Unit,
-    navigateToPreferences: () -> Unit,
     navigateToSavedImage: (Int) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
-    val navController = rememberNavController()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.large_padding)),
+            .background(MaterialTheme.colorScheme.primary),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -103,8 +91,8 @@ private fun CollectionsBody(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f)
-                .padding(top = 16.dp),
+                .fillMaxHeight()
+                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
@@ -127,8 +115,6 @@ private fun CollectionsBody(
                 SavedPhotosList(savedPhotosList = savedPhotosList, onSavedPhotoClick = navigateToSavedImage)
             }
         }
-
-        CustomNavBar(navController, navigateToHome, navigateToCollections, navigateToPreferences)
     }
 }
 
@@ -167,7 +153,7 @@ private fun SavedPhotosList(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            itemsIndexed(savedPhotosList) { index, savedPhoto ->
+            itemsIndexed(savedPhotosList) { _, savedPhoto ->
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
                     modifier = Modifier
@@ -177,7 +163,8 @@ private fun SavedPhotosList(
                             MaterialTheme.colorScheme.outlineVariant,
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .padding(4.dp).clip(RoundedCornerShape(8.dp)),
+                        .padding(4.dp)
+                        .clip(RoundedCornerShape(8.dp)),
                     shape = RoundedCornerShape(8.dp),
                 ) {
                     Column(

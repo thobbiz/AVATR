@@ -26,4 +26,6 @@
     <string name="delete_everything">Delete Everything!</string>
     <string name="tweak_settings">You can tweak some settings in here</string>
     <string name="share_on_twitter">Share on Twitter</string>
+    <string name="remove_from_collection">Remove from Collection</string>
+    <string name="home">Home</string>
 </resources>

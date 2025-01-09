@@ -10,22 +10,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.avatr.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun CustomButton1(text: Int) {
@@ -45,7 +41,7 @@ fun CustomButton1(text: Int) {
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
         ) {
 
-            Text(stringResource(text), style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
@@ -55,7 +51,6 @@ fun CustomButton1(text: Int) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
  fun CustomButton2(imageVector: ImageVector, text: Int, action: () -> Unit) {
     Button(
