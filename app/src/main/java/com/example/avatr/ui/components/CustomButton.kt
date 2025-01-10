@@ -24,31 +24,34 @@ import androidx.compose.ui.unit.dp
 import com.example.avatr.R
 
 @Composable
-fun CustomButton1(text: Int) {
-    Button(
-        onClick = { /* Handle click */ },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.button_height)),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.onPrimary,
-            contentColor = MaterialTheme.colorScheme.primary
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
-        ) {
+fun CustomButton1(text: Int, imageVector: ImageVector, action: () -> Unit = {}, enable: Boolean?) {
 
-            Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
+        Button(
+            onClick = action,
+            enabled = enable ?: false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dimensionResource(id = R.dimen.button_height)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = MaterialTheme.colorScheme.primary
+            ),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
+            ) {
+
+                Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                Icon(
+                    imageVector = imageVector,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
-    }
+
 }
 
 @Composable

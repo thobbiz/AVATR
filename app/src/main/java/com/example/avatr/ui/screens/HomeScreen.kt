@@ -71,10 +71,16 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.navigation.NavigationDestination
+import com.example.avatr.ui.navigation.navigateTo
+import com.example.avatr.ui.viewmodels.AuthState
+import com.example.avatr.ui.viewmodels.AuthViewModel
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -89,9 +95,12 @@ object HomeDestination : NavigationDestination {
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun HomeScreen(
-    drawerState: DrawerState
+    drawerState: DrawerState,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
 ) {
-   HomeBody(drawerState = drawerState)
+   HomeBody(drawerState = drawerState, modifier = modifier, navController = navController, authViewModel = authViewModel)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -99,7 +108,10 @@ fun HomeScreen(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 private fun HomeBody(
-    drawerState: DrawerState
+    drawerState: DrawerState,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
 ) {
     val viewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
     var promptText by rememberSaveable { mutableStateOf("") }
@@ -108,6 +120,15 @@ private fun HomeBody(
     val isSheetOpen = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val context = LocalContext.current
+
+    val authState = authViewModel.authState.observeAsState()
+
+    LaunchedEffect(authState.value) {
+        when(authState.value) {
+            is AuthState.Unauthenticated -> navController.navigateTo(LoginDestination)
+            else -> Unit
+        }
+    }
 
     LaunchedEffect(viewModel.homeScreenUiState) {
         if (viewModel.homeScreenUiState is HomeScreenUiState.Success) {
@@ -207,7 +228,7 @@ private fun DescriptionTextField(
             }
         },
         modifier = Modifier
-            .width(450.dp)
+            .fillMaxWidth()
             .height(dimensionResource(R.dimen.button_height))
             .border(4.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
             .onFocusChanged { focusState -> isFocused = focusState.isFocused },

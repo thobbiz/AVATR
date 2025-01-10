@@ -5,6 +5,7 @@ composeBomVersion = "2024.10.01"
 converterGson = "2.9.0"
 converterScalars = "2.9.0"
 coreSplashscreen = "1.0.1"
+firebaseBom = "33.7.0"
 gson = "2.10.1"
 hiltCompiler = "2.48"
 hiltAndroid = "2.48"
@@ -36,15 +37,23 @@ retrofit = "2.9.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 retrofit2KotlinxSerializationConverterVersion = "0.8.0"
 firebaseCrashlyticsBuildtools = "3.0.2"
+roomKtx = "2.6.1"
+roomRuntime = "2.6.1"
+googleGmsGoogleServices = "4.4.2"
+runtimeLivedata = "1.7.6"
 
 [libraries]
 androidx-compose-bom-v20241001 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterScalars" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
@@ -81,8 +90,10 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 retrofit2-kotlinx-serialization-converter-v080 = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverterVersion" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

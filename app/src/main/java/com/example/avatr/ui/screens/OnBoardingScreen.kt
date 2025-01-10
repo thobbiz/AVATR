@@ -20,25 +20,77 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.navigation.NavHostController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomButton1
+import com.example.avatr.ui.navigation.NavigationDestination
+import com.example.avatr.ui.navigation.navigateTo
+import com.example.avatr.ui.viewmodels.AuthState
+import com.example.avatr.ui.viewmodels.AuthViewModel
 
-@Composable
-fun OnBoardingScreen(images1: List<Int>,images2: List<Int>) {
-        OnBoardingBody(images1 = images1, images2 = images2)
+object OnBoardingDestination : NavigationDestination {
+    override val route = "onboarding"
+    override val titleRes = R.string.onboarding
 }
 
 @Composable
-private fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
+fun OnBoardingScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+) {
+    val images1 = listOf(
+        R.drawable._1,
+        R.drawable._2
+    )
+
+    val images2 = listOf(
+        R.drawable._3,
+        R.drawable._4,
+        R.drawable._5
+    )
+        OnBoardingBody(
+            images1 = images1,
+            images2 = images2,
+            modifier = modifier,
+            navController = navController,
+            authViewModel = authViewModel
+        )
+}
+
+@Composable
+private fun OnBoardingBody(
+    images1: List<Int>,
+    images2: List<Int>,
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel,
+    navController: NavHostController,
+) {
+
+    val authState = authViewModel.authState.observeAsState()
+
+    LaunchedEffect(authState.value) {
+        when(authState.value) {
+            is AuthState.Authenticated -> navController.navigateTo(HomeDestination)
+            else -> Unit
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             ImageList1(image1 = images1[0], image2 = images1[1])
@@ -67,39 +119,45 @@ private fun OnBoardingBody(images1: List<Int>,images2: List<Int>) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(16.dp)
+                    .align(Alignment.BottomCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
             )
             {
 
                 // AVATR Logo and Text
                 Column(
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.icon_text_bottom_padding))
+                    modifier = Modifier.fillMaxHeight(0.4f)
                 ) {
 
-                    Icon(
-                        painter = painterResource(R.drawable.splash_icon),
-                        contentDescription = "Avatr Logo",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.splash_icon_size))
-                    )
-                    Text(
-                        text = "Bring Your Art Ideas to Life\nwith Generative Art AI Models",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
 
+                        Icon(
+                            painter = painterResource(R.drawable.splash_icon),
+                            contentDescription = "Avatr Logo",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .size(125.dp)
+                                .clip(CircleShape)
+                                .padding(0.dp)
+                        )
+                        Text(
+                            text = "Bring Your Art Ideas to Life\nwith Generative Art AI Models",
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+
+                    //Get Started Button
+                    CustomButton1(
+                        R.string.get_started,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        action = { navController.navigateTo(ModelSelectionDestination) },
+                        enable = true
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                //Get Started Button
-               CustomButton1(R.string.get_started)
             }
         }
     }

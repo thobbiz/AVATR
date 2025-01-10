@@ -5,6 +5,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.avatr.ui.viewmodels.AuthViewModel
 import com.example.avatr.ui.viewmodels.CollectionsScreenViewModel
 import com.example.avatr.ui.viewmodels.DeleteAllSavedArtViewModel
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
@@ -12,6 +13,11 @@ import com.example.avatr.ui.viewmodels.SavedImageViewModel
 
 object AvatrViewModelProvider {
     val Factory = viewModelFactory {
+
+        initializer {
+            AuthViewModel()
+        }
+
         initializer {
             CollectionsScreenViewModel(avatrApplication().container.savedPhotoRepository)
         }

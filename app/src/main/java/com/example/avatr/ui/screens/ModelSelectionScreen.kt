@@ -1,5 +1,6 @@
 package com.example.avatr.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,7 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,23 +33,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomButton1
+import com.example.avatr.ui.navigation.NavigationDestination
+import com.example.avatr.ui.navigation.navigateTo
+import com.example.avatr.ui.viewmodels.AuthState
+import com.example.avatr.ui.viewmodels.AuthViewModel
 
-@Composable
-fun ModelSelectionScreen(model1: Int, model2: Int) {
-    ModelOptionBody(model1 = model1, model2 = model2 )
+object ModelSelectionDestination : NavigationDestination {
+    override val route = "modelselection"
+    override val titleRes = R.string.model_selection
 }
 
 @Composable
-private fun ModelOptionBody(model1: Int, model2: Int) {
+fun ModelSelectionScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+) {
+    val model1 = R.string.stable_diffusion_runway_ml
+    val model2 = R.string.waifu_diffusion_hakurei
+    ModelOptionBody(
+        model1 = model1,
+        model2 = model2,
+        navController = navController,
+        authViewModel = authViewModel
+    )
+}
+
+@Composable
+private fun ModelOptionBody(
+    model1: Int,
+    model2: Int,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel
+    ) {
     var selectedCardIndex by remember { mutableIntStateOf(-1) }
 
+    val authState = authViewModel.authState.observeAsState()
+
+    LaunchedEffect(authState.value) {
+        when(authState.value) {
+            is AuthState.Authenticated -> navController.navigateTo(HomeDestination)
+            else -> Unit
+        }
+    }
 
     Column (
         modifier  = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
             .padding(dimensionResource(R.dimen.large_padding)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
@@ -60,10 +101,10 @@ private fun ModelOptionBody(model1: Int, model2: Int) {
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding)),
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = "Select AI Model", style = MaterialTheme.typography.displayMedium)
+                Text(text = "Select AI Model", style = MaterialTheme.typography.displayLarge)
                 Text(
-                    text = "Select an AI image generation model to continue, you \ncan always change this in preferences.",
-                    style = MaterialTheme.typography.labelSmall,
+                    text = "Select an AI image generation model to continue, you can always change this in preferences.",
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
@@ -83,7 +124,7 @@ private fun ModelOptionBody(model1: Int, model2: Int) {
             }
         }
 
-        CustomButton1(text = R.string.lets_go)
+        CustomButton1(text = R.string.lets_go, imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, action = {navController.navigateTo(LoginDestination)}, enable = true)
     }
 }
 
@@ -108,7 +149,8 @@ private fun ModelOption1(model: Int, isSelected: Boolean, onClick: () -> Unit) {
         ) {
             Text(
                 text = stringResource(model),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
             )
 
             if (isSelected) {
@@ -143,7 +185,8 @@ private fun ModelOption2(model: Int, isSelected: Boolean, onClick: () -> Unit) {
         ) {
             Text(
                 text = stringResource(model),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
             )
 
             if (isSelected) {

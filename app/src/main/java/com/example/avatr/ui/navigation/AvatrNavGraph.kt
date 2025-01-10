@@ -29,10 +29,19 @@ import com.example.avatr.ui.screens.ExportAllSavedArtDestination
 import com.example.avatr.ui.screens.ExportAllScreen
 import com.example.avatr.ui.screens.HomeDestination
 import com.example.avatr.ui.screens.HomeScreen
+import com.example.avatr.ui.screens.LoginDestination
+import com.example.avatr.ui.screens.LoginScreen
+import com.example.avatr.ui.screens.ModelSelectionDestination
+import com.example.avatr.ui.screens.ModelSelectionScreen
+import com.example.avatr.ui.screens.OnBoardingDestination
+import com.example.avatr.ui.screens.OnBoardingScreen
 import com.example.avatr.ui.screens.PreferencesDestination
 import com.example.avatr.ui.screens.PreferencesScreen
 import com.example.avatr.ui.screens.SavedImageDestination
 import com.example.avatr.ui.screens.SavedImageScreen
+import com.example.avatr.ui.screens.SignUpDestination
+import com.example.avatr.ui.screens.SignUpScreen
+import com.example.avatr.ui.viewmodels.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,17 +49,75 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun AvatrNavHost(
     navController: NavHostController,
+    authViewModel: AuthViewModel,
     drawerState: DrawerState,
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
 ) {
 
     NavHost(
-        startDestination = HomeDestination.route,
+        startDestination = OnBoardingDestination.route,
         navController = navController,
     ) {
+
+        composable (
+            route = OnBoardingDestination.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(durationMillis = 500))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(durationMillis = 300))
+            }
+        ) {
+            OnBoardingScreen(
+                modifier, navController, authViewModel
+            )
+        }
+
+        composable (
+            route = ModelSelectionDestination.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(durationMillis = 500))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(durationMillis = 300))
+            }
+        ) {
+            ModelSelectionScreen(
+                modifier, navController, authViewModel
+            )
+        }
+
+        composable (
+            route = LoginDestination.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(durationMillis = 500))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(durationMillis = 300))
+            }
+        ) {
+            LoginScreen(
+                modifier, navController, authViewModel
+            )
+        }
+
+        composable (
+            route = SignUpDestination.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(durationMillis = 500))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(durationMillis = 300))
+            }
+        ) {
+            SignUpScreen(
+                modifier, navController, authViewModel,
+            )
+        }
+
         composable(
-            HomeDestination.route,
+            route = HomeDestination.route,
             enterTransition = {
                 fadeIn(animationSpec = tween(durationMillis = 500))
             },
@@ -59,7 +126,10 @@ fun AvatrNavHost(
             }
             ) {
             HomeScreen(
-                drawerState = drawerState
+                drawerState = drawerState,
+                navController = navController,
+                modifier = modifier,
+                authViewModel = authViewModel
             )
         }
         composable(

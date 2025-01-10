@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.avatr.ui.components.CustomNavBar
 import com.example.avatr.ui.components.DrawerContent
 import com.example.avatr.ui.navigation.AvatrNavHost
 import com.example.avatr.ui.navigation.currentScreen
 import com.example.avatr.ui.navigation.navigateTo
+import com.example.avatr.ui.viewmodels.AuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -30,6 +32,7 @@ fun MainScreen(
     isDarkTheme: MutableState<Boolean>
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
 
@@ -47,7 +50,7 @@ fun MainScreen(
             Scaffold(
                 bottomBar = {
                     navController.currentScreen()?.let {
-                        if(navController.currentScreen() != "saved_image/{savedPhotoId}" && navController.currentScreen() != "exportAll" && navController.currentScreen() != "deleteAll") {
+                        if(navController.currentScreen() != "saved_image/{savedPhotoId}" && navController.currentScreen() != "exportAll" && navController.currentScreen() != "deleteAll" && navController.currentScreen() != "signup" && navController.currentScreen() != "login" && navController.currentScreen() != "modelselection" && navController.currentScreen() != "onboarding") {
                             CustomNavBar(
                                 currentScreen = it,
                                 navigateToHome = { navController.navigateTo(HomeDestination) },
@@ -66,7 +69,7 @@ fun MainScreen(
                     }
                 }
             ) { innerPadding ->
-                AvatrNavHost(navController, drawerState, scope, Modifier.padding(innerPadding))
+                AvatrNavHost(navController, authViewModel, drawerState, scope, Modifier.padding(innerPadding))
             }
         }
     }

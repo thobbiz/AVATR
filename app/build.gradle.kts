@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -88,9 +89,18 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     //Room
-    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.crashlytics.buildtools)
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
-    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+    implementation(libs.androidx.room.ktx)
+
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation(libs.firebase.auth)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

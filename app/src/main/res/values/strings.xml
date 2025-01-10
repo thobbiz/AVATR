@@ -28,4 +28,9 @@
     <string name="share_on_twitter">Share on Twitter</string>
     <string name="remove_from_collection">Remove from Collection</string>
     <string name="home">Home</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Signup</string>
+    <string name="create_account">Create Account</string>
+    <string name="onboarding">Onboarding</string>
+    <string name="model_selection">Model Selection</string>
 </resources>

@@ -28,16 +28,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val darkTheme = mutableStateOf(isSystemInDarkTheme())
             AvatrTheme{
-//                val images1 = listOf(
-//                    R.drawable._1,
-//                    R.drawable._2
-//                )
-//
-//                val images2 = listOf(
-//                    R.drawable._3,
-//                    R.drawable._4,
-//                    R.drawable._5
-//                )
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MainScreen(isDarkTheme = darkTheme)
                 }
