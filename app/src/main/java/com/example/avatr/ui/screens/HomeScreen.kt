@@ -1,9 +1,11 @@
 package com.example.avatr.ui.screens
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.animateContentSize
@@ -28,7 +30,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -74,7 +75,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.navigation.NavigationDestination
@@ -84,7 +84,13 @@ import com.example.avatr.ui.viewmodels.AuthViewModel
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.util.Base64
+import android.util.Log
+import androidx.activity.result.PickVisualMediaRequest
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -120,8 +126,17 @@ private fun HomeBody(
     val isSheetOpen = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val context = LocalContext.current
-
     val authState = authViewModel.authState.observeAsState()
+
+    val onGenerate: (Uri?) -> Unit = { uri ->
+        viewModel.onGenerate(
+            context = context,
+            prompt = promptText,
+            negativePrompt = negativePromptText,
+            uri = uri
+        )
+    }
+
 
     LaunchedEffect(authState.value) {
         when(authState.value) {
@@ -147,7 +162,12 @@ private fun HomeBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
+                .padding(
+                    top = dimensionResource(R.dimen.extra_large_padding),
+                    bottom = dimensionResource(R.dimen.large_padding),
+                    start = dimensionResource(R.dimen.large_padding),
+                    end = dimensionResource(R.dimen.large_padding)
+                ),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
         ) {
@@ -158,17 +178,10 @@ private fun HomeBody(
                     .fillMaxWidth()
                     .fillMaxHeight(0.6f),
             )
-
             DescriptionTextField(
                 text = promptText,
                 onTextChange = { newText -> promptText = newText },
-                onGenerate = {
-                    if (promptText.isBlank()) {
-                    Log.w("GenerateImage", "Prompt text is empty!")
-                    } else {
-                    viewModel.generateImage(promptText, negativePromptText)
-                    }
-                }
+                onGenerate = onGenerate
             )
             AdvancedOptions(
                 text = negativePromptText,
@@ -186,10 +199,18 @@ private fun HomeBody(
 private fun DescriptionTextField(
     text: String,
     onTextChange: (String) -> Unit,
-    onGenerate: () -> Unit = {}
+    onGenerate: (Uri?) -> Unit = {},
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val darkMode = isSystemInDarkTheme()
+    var imageUri by remember{ mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
+
 
     OutlinedTextField(
         value = text,
@@ -203,7 +224,9 @@ private fun DescriptionTextField(
             cursorColor = MaterialTheme.colorScheme.onPrimary
         ),
         leadingIcon = {
-            IconButton(onClick = { /*TODO*/ }, modifier = Modifier
+            IconButton(onClick = {
+                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }, modifier = Modifier
                 .size(30.dp)
                 .padding(0.dp)) {
                 Icon(
@@ -214,9 +237,8 @@ private fun DescriptionTextField(
                 )
             }
         },
-
         trailingIcon = {
-            IconButton(onClick = onGenerate, modifier = Modifier
+            IconButton(onClick = { onGenerate(imageUri) }, modifier = Modifier
                 .size(50.dp)
                 .padding(0.dp)) {
                 Icon(
@@ -240,7 +262,7 @@ private fun DescriptionTextField(
 @Composable
 private fun ImageContainer(
     viewModel: HomeScreenViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
     when(viewModel.homeScreenUiState) {
         is HomeScreenUiState.NoRequest -> EmptyScreen()
@@ -280,7 +302,7 @@ private fun ErrorScreen(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
             .fillMaxHeight(0.6f),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
@@ -299,7 +321,7 @@ private fun LoadingScreen(modifier: Modifier = Modifier) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
             .fillMaxHeight(0.6f),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
@@ -323,7 +345,7 @@ private fun EmptyScreen(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
             .fillMaxHeight(0.6f),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
@@ -353,6 +375,7 @@ private fun EmptyScreen(
     }
 }
 
+@OptIn(ExperimentalEncodingApi::class)
 @Composable
 private fun AdvancedOptions(
     text: String,
@@ -364,7 +387,6 @@ private fun AdvancedOptions(
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) -0f else 180f, label = ""
     )
-
     Column(
         modifier = Modifier
             .animateContentSize (

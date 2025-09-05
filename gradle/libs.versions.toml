@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.0"
+agp = "8.12.0"
 coilCompose = "2.1.0"
 composeBomVersion = "2024.10.01"
 converterGson = "2.9.0"

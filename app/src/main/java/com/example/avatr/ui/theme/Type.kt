@@ -36,7 +36,8 @@ val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = CircluarStd,
         fontSize = 32.sp,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        lineHeight = 40.sp
     ),
     displayMedium = TextStyle(
         fontFamily = CircluarStd,

@@ -1,6 +1,7 @@
 package com.example.avatr.network
 
 import com.example.avatr.BuildConfig
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Header
@@ -27,10 +28,9 @@ interface StableDiffusionApi {
         @Header("Accept") accept: String = "application/json",
         @Part("prompt") prompt: RequestBody,
         @Part("negative_prompt") negativePrompt: RequestBody?,
-        @Part("image") image: RequestBody,
-        @Part("aspect_ratio") aspectRatio: RequestBody = "1:1".toRequestBody(),
+        @Part image: MultipartBody.Part,
         @Part("model") model: RequestBody = "sd3.5-medium".toRequestBody(),
         @Part("mode") mode: RequestBody? = "image-to-image".toRequestBody(),
-        @Part("strength") strength: RequestBody? = "0".toRequestBody()
+        @Part("strength") strength: RequestBody = "0.7".toRequestBody()
     ): StableDiffusionResponse
 }

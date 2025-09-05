@@ -4,8 +4,10 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.getValue
@@ -26,6 +28,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -53,9 +58,28 @@ class HomeScreenViewModel(
     private var latestPrompt: String? = null
     private var latestGeneratedImage: String? = null
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onGenerate(
+        context: Context,
+        prompt: String,
+        negativePrompt: String?,
+        uri: Uri?
+    ) {
+        viewModelScope.launch {
+            if (uri == null) {
+                generateImageFromText(prompt, negativePrompt)
+            } else {
+                val imagePart = prepareImagePart(context, uri)
+                Log.d("image-part", imagePart.toString())
+                generateImageFromImage(prompt, negativePrompt, imagePart)
+            }
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun generateImage(prompt: String, negativePrompt : String? = null) {
+    fun generateImageFromText(prompt: String, negativePrompt : String? = null) {
         viewModelScope.launch{
             homeScreenUiState = HomeScreenUiState.Loading // Update state to loading
             homeScreenUiState = try {
@@ -74,6 +98,30 @@ class HomeScreenViewModel(
                     HomeScreenUiState.Error("Payment required. Please update your subscription.")
                 }
                 else {
+                    HomeScreenUiState.Error("Network Issues, try again")
+                }
+            }
+        }
+    }
+
+    fun generateImageFromImage(prompt: String, negativePrompt: String? = null, imagePart: MultipartBody.Part){
+        viewModelScope.launch {
+            homeScreenUiState = HomeScreenUiState.Loading
+            homeScreenUiState = try {
+                val response = withContext(Dispatchers.IO) {
+                    stableDiffusionRepository.generateImageFromImage(
+                        prompt = prompt, negativePrompt = negativePrompt, image = imagePart
+                    )
+                }
+                latestPrompt = prompt
+                latestGeneratedImage = response.image
+                HomeScreenUiState.Success(response.image)
+            } catch (e: IOException) {
+                HomeScreenUiState.Error("Incorrect Parameters bro ")
+            } catch (e: retrofit2.HttpException) {
+                if (e.code() == 402) {
+                    HomeScreenUiState.Error("Payment required. Please update your subscription.")
+                } else {
                     HomeScreenUiState.Error("Network Issues, try again")
                 }
             }
@@ -119,6 +167,22 @@ class HomeScreenViewModel(
             file.absolutePath
         }
     }
+
+    private fun prepareImagePart(context: Context, uri: Uri): MultipartBody.Part {
+        val contentResolver = context.contentResolver
+        val inputStream = contentResolver.openInputStream(uri) ?: throw IllegalStateException("Cannot open input stream")
+        val fileName = "upload_${System.currentTimeMillis()}.png"
+
+        val requestBody = inputStream.readBytes()
+            .toRequestBody("image/*".toMediaTypeOrNull())
+
+        return MultipartBody.Part.createFormData(
+            "image",
+            fileName,
+            requestBody
+        )
+    }
+
 
     private suspend fun convertBase64ToBitmap(base64String: String): Bitmap = withContext(Dispatchers.Default) {
         val imageBytes = Base64.decode(base64String, Base64.DEFAULT)

@@ -119,10 +119,10 @@ fun AvatrNavHost(
         composable(
             route = HomeDestination.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 500))
+                fadeIn(animationSpec = tween(durationMillis = 0))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 300))
+                fadeOut(animationSpec = tween(durationMillis = 0))
             }
             ) {
             HomeScreen(
@@ -135,10 +135,10 @@ fun AvatrNavHost(
         composable(
             route = CollectionsDestination.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 500))
+                fadeIn(animationSpec = tween(durationMillis = 0))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 300))
+                fadeOut(animationSpec = tween(durationMillis = 0))
             }
         ) {
             CollectionsScreen(
@@ -152,10 +152,10 @@ fun AvatrNavHost(
         composable(
             route = PreferencesDestination.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 500))
+                fadeIn(animationSpec = tween(durationMillis = 0))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 300))
+                fadeOut(animationSpec = tween(durationMillis = 0))
             }
         ) {
             PreferencesScreen(
@@ -286,13 +286,6 @@ fun AvatrNavHost(
 fun NavHostController.navigateTo(navigationDestination: NavigationDestination) {
     this.navigate(navigationDestination.route) {
         launchSingleTop = true
-//        graph.startDestinationRoute?.let {
-//            popUpTo(it) {
-//                inclusive = false
-//                saveState = true
-//            }
-//        }
-//        restoreState = true
     }
 }
 
