@@ -233,7 +233,7 @@ private fun DescriptionTextField(
                     imageVector = ImageVector.vectorResource(id = R.drawable.upload_icon),
                     modifier = Modifier.size(25.dp),
                     contentDescription = "upload",
-                    tint = if (isFocused) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.outline,
+                    tint = if (isFocused || (imageUri != null)) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.outline,
                 )
             }
         },

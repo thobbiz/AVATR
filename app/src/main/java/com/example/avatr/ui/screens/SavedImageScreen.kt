@@ -41,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.avatr.R
 import com.example.avatr.data.SavedPhoto
@@ -137,7 +138,7 @@ private fun FirstColumn(
                 )
             }
         }
-        Text(text = savedPhoto.prompt, style = MaterialTheme.typography.labelLarge)
+        Text(text = savedPhoto.prompt, style = MaterialTheme.typography.labelLarge, lineHeight = 30.sp)
         Text(text = "Saved on: ${savedPhoto.date}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
     }
 }
@@ -191,18 +192,18 @@ private fun DeleteConfirmationDialog(
     modifier: Modifier = Modifier
 ) {
     AlertDialog(onDismissRequest = { /* Do nothing */ },
-        containerColor = MaterialTheme.colorScheme.primary,
-        title = { Text("Attention!", style = MaterialTheme.typography.bodyMedium) },
-        text = { Text("Are you sure you want to Delete this Collection ?", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        title = { Text("Delete this Collection?", style = MaterialTheme.typography.bodyMedium) },
+        text = { Text("This cannot be undone.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
         modifier = modifier,
         dismissButton = {
             TextButton(onClick = onDeleteCancel) {
-                Text("No", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
+                Text("Cancel", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         },
         confirmButton = {
             TextButton(onClick = onDeleteConfirm) {
-                Text("Yes", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
+                Text("Delete", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         })
 }

@@ -151,18 +151,18 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = { /* Do nothing */ },
-        containerColor = MaterialTheme.colorScheme.primary,
-        title = { Text("Attention!", style = MaterialTheme.typography.bodyMedium) },
-        text = { Text("Are you sure you want to delete ALL your Saved Art ?", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        title = { Text("Delete All Collections?", style = MaterialTheme.typography.bodyMedium) },
+        text = { Text("This cannot be undone.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
         modifier = modifier,
         dismissButton = {
             TextButton(onClick = onDeleteCancel) {
-                Text("No", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
+                Text("Cancel", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         },
         confirmButton = {
             TextButton(onClick = onDeleteConfirm) {
-                Text("Yes", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
+                Text("Delete", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         })
 }

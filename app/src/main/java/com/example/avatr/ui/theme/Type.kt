@@ -53,12 +53,12 @@ val Typography = Typography(
     ),
     labelLarge = TextStyle(
         fontFamily = CircluarStd,
-        fontSize = 20.sp
+        fontSize = 22.sp
     ),
 
     labelMedium = TextStyle(
         fontFamily = CircluarStd,
-        fontSize = 17.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Thin
     )
 )

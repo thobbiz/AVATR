@@ -41,6 +41,7 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 googleGmsGoogleServices = "4.4.2"
 runtimeLivedata = "1.7.6"
+animation = "1.9.0"
 
 [libraries]
 androidx-compose-bom-v20241001 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -91,6 +92,7 @@ retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit
 retrofit2-kotlinx-serialization-converter-v080 = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverterVersion" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+androidx-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

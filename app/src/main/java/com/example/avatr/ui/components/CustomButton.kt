@@ -72,7 +72,7 @@ fun CustomButton1(text: Int, imageVector: ImageVector, action: () -> Unit = {}, 
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
         ) {
             Icon(imageVector = imageVector, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            Text(stringResource(text), style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
         }
     }
 }
