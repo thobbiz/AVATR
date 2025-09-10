@@ -13,19 +13,18 @@ import java.io.IOException
 class ImageRepository(private val context: Context) {
     private val title = "Generated Image"
 
-    suspend fun saveImageToGallery(bitmap: Bitmap): Uri? {
+    suspend fun saveImageToGallery(bitmap: Bitmap?): Uri? {
+        if (bitmap == null) return null
+
         return withContext(Dispatchers.IO) {
             val contentResolver = context.contentResolver
-
-
             val imageUrl = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
             } else {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             }
-
             val contentValues = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, "$title.png")
+                put(MediaStore.Images.Media.DISPLAY_NAME, "$title.jpg")
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     put(MediaStore.Images.Media.IS_PENDING, 1)
@@ -41,9 +40,10 @@ class ImageRepository(private val context: Context) {
                     }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        contentValues.clear()
-                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                        contentResolver.update(uri, contentValues, null, null)
+                        val pendingValues = ContentValues().apply {
+                            put(MediaStore.Images.Media.IS_PENDING, 0)
+                        }
+                        contentResolver.update(uri, pendingValues, null, null)
                     }
                 }
                 uri

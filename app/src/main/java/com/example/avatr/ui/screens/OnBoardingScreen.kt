@@ -82,15 +82,6 @@ private fun OnBoardingBody(
     navController: NavHostController,
 ) {
 
-    val authState = authViewModel.authState.observeAsState()
-
-    LaunchedEffect(authState.value) {
-        when(authState.value) {
-            is AuthState.Authenticated -> navController.navigateTo(HomeDestination)
-            else -> Unit
-        }
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             ImageList1(image1 = images1[0], image2 = images1[1])

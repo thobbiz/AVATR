@@ -49,6 +49,8 @@ fun CustomNavBar(
         NavigationItem( "preferences", R.drawable.settings_icon, R.drawable.setting_icon_clicked, navigateToPreferences)
     )
 
+    val savedImage = "saved_image/{savedPhotoId}"
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -71,7 +73,7 @@ fun CustomNavBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { _, item ->
-                    val isSelected = currentScreen == item.label
+                    val isSelected = (currentScreen == item.label) || ((currentScreen == savedImage) && item.label == "collections")
                     val scale by animateFloatAsState(
                         targetValue = if (isSelected) 1f else 0.9f,
                         animationSpec = tween(durationMillis = 200, easing = LinearEasing),

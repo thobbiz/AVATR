@@ -1,19 +1,25 @@
 package com.example.avatr.ui.navigation
 
+import android.R
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -41,6 +47,7 @@ import com.example.avatr.ui.screens.SavedImageDestination
 import com.example.avatr.ui.screens.SavedImageScreen
 import com.example.avatr.ui.screens.SignUpDestination
 import com.example.avatr.ui.screens.SignUpScreen
+import com.example.avatr.ui.viewmodels.AuthState
 import com.example.avatr.ui.viewmodels.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 
@@ -53,10 +60,10 @@ fun AvatrNavHost(
     drawerState: DrawerState,
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
+    startDestination: String,
 ) {
-
     NavHost(
-        startDestination = OnBoardingDestination.route,
+        startDestination = startDestination,
         navController = navController,
     ) {
 
@@ -77,7 +84,7 @@ fun AvatrNavHost(
         composable (
             route = ModelSelectionDestination.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 500))
+                fadeIn(animationSpec = tween(durationMillis = 300))
             },
             exitTransition = {
                 fadeOut(animationSpec = tween(durationMillis = 300))
@@ -91,7 +98,7 @@ fun AvatrNavHost(
         composable (
             route = LoginDestination.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 500))
+                fadeIn(animationSpec = tween(durationMillis = 300))
             },
             exitTransition = {
                 fadeOut(animationSpec = tween(durationMillis = 300))
@@ -105,7 +112,7 @@ fun AvatrNavHost(
         composable (
             route = SignUpDestination.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 500))
+                fadeIn(animationSpec = tween(durationMillis = 300))
             },
             exitTransition = {
                 fadeOut(animationSpec = tween(durationMillis = 300))
@@ -118,12 +125,6 @@ fun AvatrNavHost(
 
         composable(
             route = HomeDestination.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 0))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 0))
-            }
             ) {
             HomeScreen(
                 drawerState = drawerState,
@@ -134,12 +135,6 @@ fun AvatrNavHost(
         }
         composable(
             route = CollectionsDestination.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 0))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 0))
-            }
         ) {
             CollectionsScreen(
                 navigateToSavedImage = {
@@ -151,12 +146,6 @@ fun AvatrNavHost(
         }
         composable(
             route = PreferencesDestination.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 0))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 0))
-            }
         ) {
             PreferencesScreen(
                 navigateToExport = { navController.navigateTo(ExportAllSavedArtDestination) },
@@ -168,30 +157,20 @@ fun AvatrNavHost(
         composable(
             route = ExportAllSavedArtDestination.route,
             enterTransition = {
-                slideInVertically(
-                    initialOffsetY = { it / 2 },
+                slideInHorizontally (
+                    initialOffsetX = { it },
                     animationSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ) + fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        easing = LinearOutSlowInEasing
+                        durationMillis = 300,
+                        easing = LinearEasing
                     )
                 )
             },
             exitTransition = {
-                slideOutVertically(
-                    targetOffsetY = { it / 2 },
+                slideOutHorizontally (
+                    targetOffsetX = { it },
                     animationSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ) + fadeOut(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        easing = LinearOutSlowInEasing
+                        durationMillis = 300,
+                        easing = LinearEasing
                     )
                 )
             }
@@ -205,30 +184,20 @@ fun AvatrNavHost(
         composable(
             route = DeleteAllSavedArtDestination.route,
             enterTransition = {
-                slideInVertically(
-                    initialOffsetY = { it / 2 },
+                slideInHorizontally (
+                    initialOffsetX = { it },
                     animationSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ) + fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        easing = LinearOutSlowInEasing
+                        durationMillis = 300,
+                        easing = LinearEasing
                     )
                 )
             },
             exitTransition = {
-                slideOutVertically(
-                    targetOffsetY = { it / 2 },
+                slideOutHorizontally (
+                    targetOffsetX = { it },
                     animationSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ) + fadeOut(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        easing = LinearOutSlowInEasing
+                        durationMillis = 300,
+                        easing = LinearEasing
                     )
                 )
             }
@@ -243,30 +212,20 @@ fun AvatrNavHost(
         composable(
             route = SavedImageDestination.routeWithArgs,
             enterTransition = {
-                slideInVertically(
-                    initialOffsetY = { it / 2 },
+                slideInHorizontally (
+                    initialOffsetX = { it },
                     animationSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ) + fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        easing = LinearOutSlowInEasing
+                        durationMillis = 300,
+                        easing = LinearEasing
                     )
                 )
             },
             exitTransition = {
-                slideOutVertically(
-                    targetOffsetY = { it / 2 },
+                slideOutHorizontally (
+                    targetOffsetX = { it },
                     animationSpec = tween(
-                        durationMillis = 500,
-                        easing = FastOutSlowInEasing
-                    )
-                ) + fadeOut(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        easing = LinearOutSlowInEasing
+                        durationMillis = 300,
+                        easing = LinearEasing
                     )
                 )
             },

@@ -116,14 +116,16 @@ class HomeScreenViewModel(
                 latestPrompt = prompt
                 latestGeneratedImage = response.image
                 HomeScreenUiState.Success(response.image)
-            } catch (e: IOException) {
-                HomeScreenUiState.Error("Incorrect Parameters bro ")
             } catch (e: retrofit2.HttpException) {
-                if (e.code() == 402) {
-                    HomeScreenUiState.Error("Payment required. Please update your subscription.")
-                } else {
-                    HomeScreenUiState.Error("Network Issues, try again")
-                }
+                HomeScreenUiState.Error(
+                    when (e.code()) {
+                        400 -> "Invalid Parameters."
+                        402 -> "Payment required.\n Please update your subscription."
+                        403 -> "Your Content was flagged"
+                        413 -> "Your request was too large"
+                        else -> "Invalid"
+                    }
+                )
             }
         }
     }
@@ -154,7 +156,7 @@ class HomeScreenViewModel(
         }
     }
 
-    private suspend fun saveImageToStorage(context: Context, bitmap: Bitmap, prompt: String): String {
+    private suspend fun saveImageToStorage(context: Context, bitmap: Bitmap?, prompt: String): String {
         return withContext(Dispatchers.IO) {
             val directory = File(context.filesDir, "images")
             if (!directory.exists()) {
@@ -162,7 +164,7 @@ class HomeScreenViewModel(
             }
             val file = File(directory, "${prompt}_${System.currentTimeMillis()}.jpg")
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, out)
             }
             file.absolutePath
         }
@@ -184,9 +186,13 @@ class HomeScreenViewModel(
     }
 
 
-    private suspend fun convertBase64ToBitmap(base64String: String): Bitmap = withContext(Dispatchers.Default) {
-        val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
-        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    private suspend fun convertBase64ToBitmap(base64String: String): Bitmap? = withContext(Dispatchers.Default) {
+        try {
+            val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
     }
 
     fun decodeImage(image: String): Bitmap? {
@@ -194,7 +200,6 @@ class HomeScreenViewModel(
         viewModelScope.launch {
             bitmap = convertBase64ToBitmap(image)
         }
-
         return bitmap
     }
 

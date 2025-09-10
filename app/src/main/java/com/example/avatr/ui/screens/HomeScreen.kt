@@ -287,7 +287,7 @@ private fun SuccessScreen(viewModel: HomeScreenViewModel, image: String) {
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 modifier = Modifier.fillMaxSize(),
-                contentDescription = null,
+                contentDescription = "Generated Image",
                 contentScale = ContentScale.Crop
             )
         }
