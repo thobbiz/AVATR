@@ -34,5 +34,5 @@ It leverages **Hugging Face image generation models** and provides a clean, mini
 
 ### Clone the repo
 ```bash
-git clone https://github.com/<Thobbiz>/avatar.git
+git clone https://github.com/<thobbiz>/avatar.git
 cd avatar
