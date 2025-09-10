@@ -19,9 +19,9 @@ It leverages **Hugging Face image generation models** and provides a clean, mini
 ---
 
 ## 📱 Screenshots
-/screenshots/home.png
-/screenshots/collections.png
-/screenshots/preferences.png
+![Home Screen](screenshots/home.png)
+![Collections Screen](screenshots/collections.png)
+![Preferences Screen](screenshots/preferences.png)
 
 ---
 
