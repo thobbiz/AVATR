@@ -1,6 +1,6 @@
-# AVATAR 🎨🤖
+# AVATR 🎨🤖
 
-AVATAR is an **AI-powered Android app** built with **Jetpack Compose** that generates images from text prompts.  
+AVATR is an **AI-powered Android app** built with **Jetpack Compose** that generates images from text prompts.  
 It leverages **Hugging Face image generation models** and provides a clean, minimalist UI experience.
 
 ---
