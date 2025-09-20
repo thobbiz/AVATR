@@ -1,25 +1,17 @@
 package com.example.avatr.ui.navigation
 
-import android.R
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -47,7 +39,6 @@ import com.example.avatr.ui.screens.SavedImageDestination
 import com.example.avatr.ui.screens.SavedImageScreen
 import com.example.avatr.ui.screens.SignUpDestination
 import com.example.avatr.ui.screens.SignUpScreen
-import com.example.avatr.ui.viewmodels.AuthState
 import com.example.avatr.ui.viewmodels.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 
@@ -60,10 +51,10 @@ fun AvatrNavHost(
     drawerState: DrawerState,
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
-    startDestination: String,
+    startDestination: NavigationDestination,
 ) {
     NavHost(
-        startDestination = startDestination,
+        startDestination = startDestination.route,
         navController = navController,
     ) {
 

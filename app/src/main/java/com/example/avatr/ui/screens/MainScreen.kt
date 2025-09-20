@@ -40,8 +40,8 @@ fun MainScreen(
     val authState = authViewModel.authState.observeAsState()
 
     val startDestination = when (authState.value) {
-        is AuthState.Authenticated -> HomeDestination.route
-        else -> OnBoardingDestination.route
+        is AuthState.Authenticated -> HomeDestination
+        else -> OnBoardingDestination
     }
 
     Surface(

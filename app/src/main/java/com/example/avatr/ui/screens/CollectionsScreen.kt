@@ -148,60 +148,68 @@ private fun SavedPhotosList(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             itemsIndexed(savedPhotosList) { _, savedPhoto ->
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .clickable { onSavedPhotoClick(savedPhoto.id) }
-                        .border(
-                            1.5.dp,
-                            MaterialTheme.colorScheme.outlineVariant,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        loadImageFromStorage(savedPhoto.base64FilePath)?.let {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(4.dp)
-                            ) {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = "Generated Image",
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = savedPhoto.prompt,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSecondary,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                modifier = Modifier.fillMaxWidth(0.9f)
-                            )
+                SavedPhoto(savedPhoto, onSavedPhotoClick)
+            }
+        }
+    }
+}
 
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.arrowfront_icon),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.tertiaryContainer
-                            )
-                        }
-                    }
+@Composable
+fun SavedPhoto(
+    savedPhoto: SavedPhoto,
+    onSavedPhotoClick: (Int) -> Unit
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+        modifier = Modifier
+            .clickable { onSavedPhotoClick(savedPhoto.id) }
+            .border(
+                1.5.dp,
+                MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(4.dp)
+            .clip(RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            loadImageFromStorage(savedPhoto.base64FilePath)?.let {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "Generated Image",
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = savedPhoto.prompt,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                )
+
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.arrowfront_icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.tertiaryContainer
+                )
             }
         }
     }
