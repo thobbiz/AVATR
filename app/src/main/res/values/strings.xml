@@ -33,4 +33,8 @@
     <string name="create_account">Create Account</string>
     <string name="onboarding">Onboarding</string>
     <string name="model_selection">Model Selection</string>
+    <string name="this_cannot_be_undone">This cannot be undone.</string>
+    <string name="delete_all_collections">Delete All Collections?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.example.avatr.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -76,7 +78,7 @@ fun CustomNavBar(
                     val isSelected = (currentScreen == item.label) || ((currentScreen == savedImage) && item.label == "collections")
                     val scale by animateFloatAsState(
                         targetValue = if (isSelected) 1f else 0.9f,
-                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                        animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing),
                         label = ""
                     )
 
@@ -106,7 +108,7 @@ fun CustomNavBar(
                             enter = expandVertically(
                                 expandFrom = Alignment.Bottom,
                                 animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioHighBouncy,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
                                     stiffness = Spring.StiffnessVeryLow
                                 )
                             ),

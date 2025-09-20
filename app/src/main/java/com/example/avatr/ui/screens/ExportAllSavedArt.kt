@@ -44,7 +44,6 @@ fun ExportAllScreen(
 private fun ExportAllBody(
     navigateBack: () -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,16 +51,14 @@ private fun ExportAllBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.9f)
                 .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.extra_large_padding))
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.button_height))
         ) {
-
             CustomTopAppBar(title = R.string.export_saved_art, navigateBack = navigateBack)
 
             Column(

@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -59,7 +60,7 @@ private val LightColorScheme = lightColorScheme(
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AvatrTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: MutableState<Boolean> ,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
@@ -67,17 +68,17 @@ fun AvatrTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) DarkColorScheme else LightColorScheme
+            if (darkTheme.value) DarkColorScheme else LightColorScheme
         }
 
-        darkTheme -> DarkColorScheme
+        darkTheme.value -> DarkColorScheme
         else -> LightColorScheme
     }
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            setUpEdgeToEdge(view, darkTheme)
+            setUpEdgeToEdge(view, darkTheme.value)
         }
     }
 

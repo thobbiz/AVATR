@@ -44,7 +44,6 @@ fun DrawerContent(scope: CoroutineScope, drawerState: DrawerState, isDarkTheme: 
         )
         Row(horizontalArrangement = Arrangement.spacedBy(30.dp)) {
             NavigationDrawerItem(
-
                 label = {
                     Text(
                         "Dark Mode",
@@ -62,9 +61,7 @@ fun DrawerContent(scope: CoroutineScope, drawerState: DrawerState, isDarkTheme: 
                     )
                 },
                 onClick = {
-                    scope.launch {
-                        drawerState.close()
-                    }
+
                 },
                 badge = {
                     Switch(

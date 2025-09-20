@@ -62,9 +62,7 @@ fun CollectionsScreen(
     scope: CoroutineScope,
     viewModel: CollectionsScreenViewModel = viewModel(factory = AvatrViewModelProvider.Factory)
     ) {
-
     val collectionsUiState by viewModel.collectionsUiState.collectAsState()
-
     CollectionsBody(
         drawerState = drawerState,
         scope = scope,
@@ -87,7 +85,6 @@ private fun CollectionsBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,16 +99,13 @@ private fun CollectionsBody(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding))
             ) {
-
                 CustomHeader(scope = scope, headerText = R.string.collections, drawerState = drawerState)
-
                 Text(
                     text = stringResource(R.string.art_you_ve_saved_will_appear_here),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xff747b82)
                 )
-
                 SavedPhotosList(savedPhotosList = savedPhotosList, onSavedPhotoClick = navigateToSavedImage)
             }
         }

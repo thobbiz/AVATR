@@ -37,7 +37,6 @@ fun MainScreen(
     val authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
-
     val authState = authViewModel.authState.observeAsState()
 
     val startDestination = when (authState.value) {
@@ -51,6 +50,7 @@ fun MainScreen(
             .background(MaterialTheme.colorScheme.primary)
     ) {
         ModalNavigationDrawer(
+            gesturesEnabled = true,
             drawerState = drawerState,
             drawerContent = {
                 DrawerContent(scope = scope, drawerState = drawerState, isDarkTheme = isDarkTheme)

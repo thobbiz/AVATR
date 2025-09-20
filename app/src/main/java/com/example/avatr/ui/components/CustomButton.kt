@@ -25,7 +25,6 @@ import com.example.avatr.R
 
 @Composable
 fun CustomButton1(text: Int, imageVector: ImageVector, action: () -> Unit = {}, enable: Boolean?) {
-
         Button(
             onClick = action,
             enabled = enable ?: false,
@@ -42,7 +41,6 @@ fun CustomButton1(text: Int, imageVector: ImageVector, action: () -> Unit = {}, 
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
             ) {
-
                 Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                 Icon(
                     imageVector = imageVector,
@@ -51,7 +49,6 @@ fun CustomButton1(text: Int, imageVector: ImageVector, action: () -> Unit = {}, 
                 )
             }
         }
-
 }
 
 @Composable

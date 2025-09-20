@@ -84,11 +84,7 @@ import com.example.avatr.ui.viewmodels.AuthViewModel
 import com.example.avatr.ui.viewmodels.HomeScreenUiState
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import android.util.Base64
-import android.util.Log
 import androidx.activity.result.PickVisualMediaRequest
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -361,12 +357,12 @@ private fun EmptyScreen(
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(10.dp))
 
             Text(
                 text = stringResource(R.string.no_generated_image),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xff747b82),
                 fontWeight = FontWeight.Bold
             )

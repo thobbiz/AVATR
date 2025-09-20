@@ -58,7 +58,6 @@ private fun DeleteAllSavedArtBody(
     navigateBack: () -> Unit,
     viewModel: DeleteAllSavedArtViewModel = viewModel(factory = AvatrViewModelProvider.Factory)
 ) {
-
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -70,16 +69,19 @@ private fun DeleteAllSavedArtBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.9f)
-                .padding(top = dimensionResource(R.dimen.extra_large_padding), bottom = dimensionResource(R.dimen.large_padding), start = dimensionResource(R.dimen.large_padding), end = dimensionResource(R.dimen.large_padding)),
+                .padding(
+                    top = dimensionResource(R.dimen.extra_large_padding),
+                    bottom = dimensionResource(R.dimen.large_padding),
+                    start = dimensionResource(R.dimen.large_padding),
+                    end = dimensionResource(R.dimen.large_padding)
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.extra_large_padding))
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.button_height))
         ) {
-
             CustomTopAppBar(title = R.string.delete_saved_art, navigateBack = navigateBack)
 
             Column(
@@ -99,7 +101,6 @@ private fun DeleteAllSavedArtBody(
                         deleteConfirmationRequired = true
                     }
                 )
-
                 if (deleteConfirmationRequired) {
                     DeleteConfirmationDialog(
                         onDeleteConfirm = {
@@ -129,16 +130,13 @@ private fun Button(imageVector: ImageVector, text: Int, action: () -> Unit) {
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
-
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.images_padding))
         ) {
-
             Icon(imageVector = imageVector, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            Text(stringResource(text), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
 
+            Text(stringResource(text), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -152,17 +150,17 @@ private fun DeleteConfirmationDialog(
     AlertDialog(
         onDismissRequest = { /* Do nothing */ },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        title = { Text("Delete All Collections?", style = MaterialTheme.typography.bodyMedium) },
-        text = { Text("This cannot be undone.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
+        title = { Text(stringResource(R.string.delete_all_collections), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
+        text = { Text(stringResource(R.string.this_cannot_be_undone), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary) },
         modifier = modifier,
         dismissButton = {
             TextButton(onClick = onDeleteCancel) {
-                Text("Cancel", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
+                Text(stringResource(R.string.cancel), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         },
         confirmButton = {
             TextButton(onClick = onDeleteConfirm) {
-                Text("Delete", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
+                Text(stringResource(R.string.delete), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         })
 }
