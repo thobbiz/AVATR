@@ -160,7 +160,7 @@ private fun SecondColumn(
             text = R.string.share_on_twitter,
             icon = R.drawable.twitter_icon,
             action = {
-//                ShareToTweeter(savedPhoto.)
+                ShareToTweeter(context, savedPhoto.base64FilePath)
             })
 
         SavedImageFunction(

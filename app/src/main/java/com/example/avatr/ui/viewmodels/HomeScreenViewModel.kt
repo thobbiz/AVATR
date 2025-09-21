@@ -26,6 +26,8 @@ import com.example.avatr.data.StableDiffusionRepository
 import com.example.avatr.ui.AvatrApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -57,6 +59,8 @@ class HomeScreenViewModel(
 
     private var latestPrompt: String? = null
     private var latestGeneratedImage: String? = null
+    private val _decodedBitmap = MutableStateFlow<Bitmap?>(null)
+    val decodedBitmap: StateFlow<Bitmap?> = _decodedBitmap
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @RequiresApi(Build.VERSION_CODES.O)
@@ -195,12 +199,11 @@ class HomeScreenViewModel(
         }
     }
 
-    fun decodeImage(image: String): Bitmap? {
-        var bitmap: Bitmap? = null
-        viewModelScope.launch {
-            bitmap = convertBase64ToBitmap(image)
+    fun decodeImage(image: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val bitmap = convertBase64ToBitmap(image)
+            _decodedBitmap.value = bitmap
         }
-        return bitmap
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

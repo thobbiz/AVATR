@@ -86,6 +86,7 @@ import com.example.avatr.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.runtime.collectAsState
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 object HomeDestination : NavigationDestination {
@@ -262,13 +263,18 @@ private fun ImageContainer(
         is HomeScreenUiState.NoRequest -> EmptyScreen()
         is HomeScreenUiState.Success -> SuccessScreen(viewModel, (viewModel.homeScreenUiState as HomeScreenUiState.Success).image)
         is HomeScreenUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize(), (viewModel.homeScreenUiState as HomeScreenUiState.Error).error)
-        else -> LoadingScreen(modifier = Modifier.fillMaxSize())
+        else -> LoadingScreen()
     }
 
 }
 
 @Composable
 private fun SuccessScreen(viewModel: HomeScreenViewModel, image: String) {
+    val bitmap by viewModel.decodedBitmap.collectAsState()
+
+    LaunchedEffect(image) {
+        viewModel.decodeImage(image)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -276,10 +282,9 @@ private fun SuccessScreen(viewModel: HomeScreenViewModel, image: String) {
             .fillMaxHeight(0.6f),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        val bitmap = viewModel.decodeImage(image)
-        if (bitmap != null) {
+        bitmap?.let {
             Image(
-                bitmap = bitmap.asImageBitmap(),
+                bitmap = it.asImageBitmap(),
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = "Generated Image",
                 contentScale = ContentScale.Crop
@@ -325,7 +330,7 @@ private fun LoadingScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxSize()
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(30.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
                 strokeWidth = 4.dp
             )
