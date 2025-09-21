@@ -98,11 +98,10 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     drawerState: DrawerState,
-    modifier: Modifier = Modifier,
     navController: NavHostController,
     authViewModel: AuthViewModel
 ) {
-   HomeBody(drawerState = drawerState, modifier = modifier, navController = navController, authViewModel = authViewModel)
+   HomeBody(drawerState = drawerState, navController = navController, authViewModel = authViewModel)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -111,7 +110,6 @@ fun HomeScreen(
 @Composable
 private fun HomeBody(
     drawerState: DrawerState,
-    modifier: Modifier = Modifier,
     navController: NavHostController,
     authViewModel: AuthViewModel
 ) {
@@ -263,7 +261,7 @@ private fun ImageContainer(
     when(viewModel.homeScreenUiState) {
         is HomeScreenUiState.NoRequest -> EmptyScreen()
         is HomeScreenUiState.Success -> SuccessScreen(viewModel, (viewModel.homeScreenUiState as HomeScreenUiState.Success).image)
-        is HomeScreenUiState.Error -> ErrorScreen(modifier = Modifier.fillMaxSize(), (viewModel.homeScreenUiState as HomeScreenUiState.Error).error)
+        is HomeScreenUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize(), (viewModel.homeScreenUiState as HomeScreenUiState.Error).error)
         else -> LoadingScreen(modifier = Modifier.fillMaxSize())
     }
 
@@ -296,7 +294,7 @@ private fun ErrorScreen(
     error: String
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
             .fillMaxHeight(0.6f),
@@ -315,7 +313,7 @@ private fun ErrorScreen(
 @Composable
 private fun LoadingScreen(modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
             .fillMaxHeight(0.6f),
@@ -327,7 +325,7 @@ private fun LoadingScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxSize()
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(30.dp),
+                modifier = Modifier.size(20.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
                 strokeWidth = 4.dp
             )

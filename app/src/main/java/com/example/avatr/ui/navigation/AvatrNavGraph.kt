@@ -68,7 +68,7 @@ fun AvatrNavHost(
             }
         ) {
             OnBoardingScreen(
-                modifier, navController, authViewModel
+                navController
             )
         }
 
@@ -120,7 +120,6 @@ fun AvatrNavHost(
             HomeScreen(
                 drawerState = drawerState,
                 navController = navController,
-                modifier = modifier,
                 authViewModel = authViewModel
             )
         }
@@ -236,6 +235,7 @@ fun AvatrNavHost(
 fun NavHostController.navigateTo(navigationDestination: NavigationDestination) {
     this.navigate(navigationDestination.route) {
         launchSingleTop = true
+        popUpTo(navigationDestination.route)
     }
 }
 

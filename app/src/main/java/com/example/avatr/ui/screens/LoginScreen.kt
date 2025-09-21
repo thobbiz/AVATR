@@ -10,12 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -113,8 +110,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen.button_height))
-                .border(4.dp, Color.Transparent, shape = RoundedCornerShape(8.dp))
-                .onFocusChanged { focusState -> isFocused = focusState.isFocused },
+                .border(4.dp, Color.Transparent, shape = RoundedCornerShape(8.dp)),
             enabled = true,
             singleLine = true
         )

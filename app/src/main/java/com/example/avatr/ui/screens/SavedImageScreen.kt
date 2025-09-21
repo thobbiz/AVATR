@@ -49,6 +49,7 @@ import com.example.avatr.ui.AvatrViewModelProvider
 import com.example.avatr.ui.components.CustomButton2
 
 import com.example.avatr.ui.components.CustomTopAppBar
+import com.example.avatr.ui.components.ShareToTweeter
 import com.example.avatr.ui.components.loadImageFromStorage
 import com.example.avatr.ui.navigation.NavigationDestination
 import com.example.avatr.ui.viewmodels.SavedImageViewModel
@@ -158,7 +159,9 @@ private fun SecondColumn(
         SavedImageFunction(
             text = R.string.share_on_twitter,
             icon = R.drawable.twitter_icon,
-            action = {})
+            action = {
+//                ShareToTweeter(savedPhoto.)
+            })
 
         SavedImageFunction(
             text = R.string.remove_from_collection,

@@ -25,22 +25,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.example.avatr.R
 import com.example.avatr.ui.components.CustomButton1
 import com.example.avatr.ui.navigation.NavigationDestination
 import com.example.avatr.ui.navigation.navigateTo
-import com.example.avatr.ui.viewmodels.AuthState
 import com.example.avatr.ui.viewmodels.AuthViewModel
 
 object OnBoardingDestination : NavigationDestination {
@@ -50,9 +47,7 @@ object OnBoardingDestination : NavigationDestination {
 
 @Composable
 fun OnBoardingScreen(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
-    authViewModel: AuthViewModel
 ) {
     val images1 = listOf(
         R.drawable._1,
@@ -67,9 +62,7 @@ fun OnBoardingScreen(
         OnBoardingBody(
             images1 = images1,
             images2 = images2,
-            modifier = modifier,
             navController = navController,
-            authViewModel = authViewModel
         )
 }
 
@@ -77,8 +70,6 @@ fun OnBoardingScreen(
 private fun OnBoardingBody(
     images1: List<Int>,
     images2: List<Int>,
-    modifier: Modifier = Modifier,
-    authViewModel: AuthViewModel,
     navController: NavHostController,
 ) {
 
@@ -116,15 +107,13 @@ private fun OnBoardingBody(
                 verticalArrangement = Arrangement.Bottom
             )
             {
-
                 // AVATR Logo and Text
                 Column(
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxHeight(0.4f)
                 ) {
-
-
+                    // Avatr Logo
                         Icon(
                             painter = painterResource(R.drawable.splash_icon),
                             contentDescription = "Avatr Logo",
@@ -137,6 +126,7 @@ private fun OnBoardingBody(
                         Text(
                             text = "Bring Your Art Ideas to Life\nwith Generative Art AI Models",
                             style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
