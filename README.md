@@ -1,6 +1,6 @@
-# AVATAR 🎨🤖
+# AVATR 🎨🤖
 
-AVATAR is an **AI-powered Android app** built with **Jetpack Compose** that generates images from text prompts.  
+AVATR is an **AI-powered Android app** built with **Jetpack Compose** that generates images from text prompts.  
 It leverages **Hugging Face image generation models** and provides a clean, minimalist UI experience.
 
 ---
@@ -19,7 +19,9 @@ It leverages **Hugging Face image generation models** and provides a clean, mini
 ---
 
 ## 📱 Screenshots
-
+![Home Screen](screenshots/home.png)
+![Collections Screen](screenshots/collections.png)
+![Preferences Screen](screenshots/preferences.png)
 
 ---
 
@@ -32,5 +34,5 @@ It leverages **Hugging Face image generation models** and provides a clean, mini
 
 ### Clone the repo
 ```bash
-git clone https://github.com/<Thobbiz>/avatar.git
+git clone https://github.com/<thobbiz>/avatar.git
 cd avatar
