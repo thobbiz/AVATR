@@ -1,5 +1,6 @@
 package com.example.avatr.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,9 +29,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.avatr.R
+import com.example.avatr.data.AIModel
 import com.example.avatr.ui.components.CustomHeader
 import com.example.avatr.ui.navigation.NavigationDestination
+import com.example.avatr.ui.viewmodels.PreferencesScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 
 object PreferencesDestination : NavigationDestination {
@@ -55,6 +60,13 @@ private fun PreferencesBody(
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
+    val viewModel: PreferencesScreenViewModel = viewModel(factory = PreferencesScreenViewModel.Factory)
+    val uiState = viewModel.uiState.collectAsState().value
+    val onModelOptionSelected = viewModel::selectAIModel
+    val selectedIndex = uiState.aiModel
+    val modelOptions = listOf(AIModel.STABLE_DIFFUSION.displayName, AIModel.BLACK_FOREST_FLUX.displayName)
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +106,12 @@ private fun PreferencesBody(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                FirstColumn()
+                Log.d("ai model", viewModel.getCurrentAIModelName())
+                FirstColumn(modelOptions = modelOptions, selectedIndex = selectedIndex,
+                    onModelOptionSelected = { index ->
+                        onModelOptionSelected(index)
+                    }
+                )
                 HorizontalDivider()
                 SecondColumn(
                     navigateToExport = navigateToExport,
@@ -106,13 +123,13 @@ private fun PreferencesBody(
 }
 
 @Composable
-private fun FirstColumn() {
+private fun FirstColumn(modelOptions: List<String>, onModelOptionSelected: (Int) -> Unit, selectedIndex: Int) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        FirstColumnFirstRowBlueprint(imageVector = R.drawable.ai_model_icon, text = R.string.ai_model)
+        FirstColumnFirstRowBlueprint(imageVector = R.drawable.ai_model_icon, text = R.string.ai_model, modelOptions = modelOptions, onModelOptionSelected = onModelOptionSelected, selectedIndex = selectedIndex)
         FirstColumnSecondRowBlueprint(imageVector = R.drawable.language_icon, text = R.string.language)
     }
 }
@@ -134,7 +151,7 @@ private fun SecondColumn(
 
 
 @Composable
-private fun FirstColumnFirstRowBlueprint(imageVector: Int, text: Int) {
+private fun FirstColumnFirstRowBlueprint(imageVector: Int, text: Int, modelOptions: List<String>, onModelOptionSelected: (Int) -> Unit, selectedIndex: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,35 +177,7 @@ private fun FirstColumnFirstRowBlueprint(imageVector: Int, text: Int) {
                 fontWeight = FontWeight.Bold
             )
         }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(R.string.stable_diffusion_model), color = MaterialTheme.colorScheme.onTertiary, fontWeight = FontWeight.Bold)
-
-            Column(
-                modifier = Modifier,
-                verticalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-                IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(18.dp)) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_down),
-                        contentDescription = stringResource(text),
-                        tint = MaterialTheme.colorScheme.onTertiary
-                    )
-                }
-
-                IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(18.dp)) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_up),
-                        contentDescription = stringResource(text),
-                        tint = MaterialTheme.colorScheme.onTertiary
-                    )
-                }
-            }
-        }
-
+        ModelSelector(modelOptions, selectedIndex, onModelOptionSelected)
     }
 }
 
@@ -267,6 +256,54 @@ private fun SecondColumnBlueprint(imageVector: Int, text: Int, navigateToScreen:
                 contentDescription = stringResource(text),
                 tint = MaterialTheme.colorScheme.onTertiary
             )
+        }
+    }
+}
+
+@Composable
+fun ModelSelector(
+    modelOptions: List<String>,
+    selectedIndex: Int,
+    onModelOptionSelected: (Int) -> Unit
+) {
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = modelOptions[selectedIndex],
+            color = MaterialTheme.colorScheme.onTertiary,
+            fontWeight = FontWeight.Bold
+        )
+
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            IconButton(
+                onClick = {
+                    val newIndex = if (selectedIndex > 0) selectedIndex - 1 else modelOptions.lastIndex
+                onModelOptionSelected(newIndex)
+                          },
+                modifier = Modifier.size(18.dp)) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.icon_down),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onTertiary
+                )
+            }
+
+            IconButton(onClick = {
+                val newIndex = if (selectedIndex < modelOptions.lastIndex) selectedIndex + 1 else 0
+                onModelOptionSelected(newIndex)
+            }, modifier = Modifier.size(18.dp)) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.icon_up),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onTertiary
+                )
+            }
         }
     }
 }

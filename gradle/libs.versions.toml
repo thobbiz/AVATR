@@ -6,6 +6,7 @@ composeBomVersion = "2024.10.01"
 converterGson = "2.9.0"
 converterScalars = "2.9.0"
 coreSplashscreen = "1.0.1"
+datastorePreferences = "1.1.7"
 espressoCoreVersion = "3.5.1"
 firebaseBom = "33.7.0"
 gson = "2.10.1"
@@ -49,6 +50,7 @@ animation = "1.9.0"
 androidx-compose-bom-v20241001 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
 androidx-junit-v130 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }

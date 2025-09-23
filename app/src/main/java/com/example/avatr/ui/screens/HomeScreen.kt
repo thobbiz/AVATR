@@ -269,7 +269,7 @@ private fun ImageContainer(
 }
 
 @Composable
-private fun SuccessScreen(viewModel: HomeScreenViewModel, image: String) {
+private fun SuccessScreen(viewModel: HomeScreenViewModel, image: ByteArray) {
     val bitmap by viewModel.decodedBitmap.collectAsState()
 
     LaunchedEffect(image) {

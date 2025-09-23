@@ -8,6 +8,7 @@ data class SavedPhoto (
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val prompt: String,
-    val base64FilePath: String,
+    val filePath: String,
+    val model: String,
     val date: String
 )

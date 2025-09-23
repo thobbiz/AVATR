@@ -62,7 +62,8 @@ data class SavedPhotoUiState(
 data class SavedPhotoDetails(
     val id: Int = 0,
     val prompt: String = "",
-    val base64FilePath: String = "",
+    val filePath: String = "",
+    val model: String = "Stable Diffusion",
     val date: String = ""
 )
 
@@ -70,13 +71,15 @@ data class SavedPhotoDetails(
 private fun SavedPhoto.toSavedPhotoDetails() = SavedPhotoDetails(
     id = id,
     prompt = prompt,
-    base64FilePath = base64FilePath,
+    filePath = filePath,
+    model = model,
     date = date
 )
 
 fun SavedPhotoDetails.toSavedPhoto(): SavedPhoto = SavedPhoto(
     id = id,
     prompt = prompt,
-    base64FilePath = base64FilePath,
+    filePath = filePath,
+    model = model,
     date = date
 )

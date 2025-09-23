@@ -9,6 +9,7 @@ import com.example.avatr.ui.viewmodels.AuthViewModel
 import com.example.avatr.ui.viewmodels.CollectionsScreenViewModel
 import com.example.avatr.ui.viewmodels.DeleteAllSavedArtViewModel
 import com.example.avatr.ui.viewmodels.HomeScreenViewModel
+import com.example.avatr.ui.viewmodels.PreferencesScreenViewModel
 import com.example.avatr.ui.viewmodels.SavedImageViewModel
 
 object AvatrViewModelProvider {
@@ -24,9 +25,10 @@ object AvatrViewModelProvider {
 
         initializer {
             HomeScreenViewModel(
-                avatrApplication().container.stableDiffusionRepository,
+                avatrApplication().container.modelsRepository,
                 avatrApplication().container.imageRepository,
                 avatrApplication().container.savedPhotoRepository,
+                userPreferencesRepository = avatrApplication().userPreferencesRepository,
                 application = avatrApplication()
             )
         }
@@ -42,6 +44,13 @@ object AvatrViewModelProvider {
         initializer {
             DeleteAllSavedArtViewModel(
                 avatrApplication().container.savedPhotoRepository
+            )
+        }
+
+        initializer {
+            PreferencesScreenViewModel(
+                avatrApplication().userPreferencesRepository,
+                application = avatrApplication()
             )
         }
     }

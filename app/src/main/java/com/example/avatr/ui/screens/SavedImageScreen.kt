@@ -121,7 +121,7 @@ private fun FirstColumn(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.large_padding)),
         horizontalAlignment = Alignment.Start
     ) {
-        val bitmap = loadImageFromStorage(savedPhoto.base64FilePath)
+        val bitmap = loadImageFromStorage(savedPhoto.filePath)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -141,6 +141,7 @@ private fun FirstColumn(
         }
         Text(text = savedPhoto.prompt, style = MaterialTheme.typography.labelLarge, lineHeight = 30.sp)
         Text(text = "Saved on: ${savedPhoto.date}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+        Text(text = "Model: ${savedPhoto.model}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
     }
 }
 
@@ -160,7 +161,7 @@ private fun SecondColumn(
             text = R.string.share_on_twitter,
             icon = R.drawable.twitter_icon,
             action = {
-                ShareToTweeter(context, savedPhoto.base64FilePath)
+                ShareToTweeter(context, savedPhoto.filePath)
             })
 
         SavedImageFunction(
@@ -172,7 +173,7 @@ private fun SecondColumn(
             imageVector = ImageVector.vectorResource(R.drawable.save_icon),
             text = R.string.save_to_device,
             action = {
-                viewModel.saveImageToGallery(savedPhoto.base64FilePath)
+                viewModel.saveImageToGallery(savedPhoto.filePath)
                 Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
             })
 

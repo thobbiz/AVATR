@@ -176,7 +176,7 @@ fun SavedPhoto(
             modifier = Modifier.padding(4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            loadImageFromStorage(savedPhoto.base64FilePath)?.let {
+            loadImageFromStorage(savedPhoto.filePath)?.let {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth(),

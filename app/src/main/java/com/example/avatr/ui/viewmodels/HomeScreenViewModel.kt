@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
@@ -19,16 +18,22 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.avatr.data.AIModel
 import com.example.avatr.data.ImageRepository
+import com.example.avatr.data.ModelsRepository
 import com.example.avatr.data.SavedPhoto
 import com.example.avatr.data.SavedPhotosRepository
-import com.example.avatr.data.StableDiffusionRepository
+import com.example.avatr.data.UserPreferencesRepository
 import com.example.avatr.ui.AvatrApplication
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -41,16 +46,17 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 sealed interface HomeScreenUiState {
-    data class Success(val image: String) : HomeScreenUiState
+    data class Success(val image: ByteArray) : HomeScreenUiState
     data class Error(val error: String) : HomeScreenUiState
     data object Loading : HomeScreenUiState
     data object NoRequest : HomeScreenUiState
 }
 
 class HomeScreenViewModel(
-    private val stableDiffusionRepository: StableDiffusionRepository,
+    private val modelsRepository: ModelsRepository,
     private val imageRepository: ImageRepository,
     private val savedPhotosRepository: SavedPhotosRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     application: Application
 ): AndroidViewModel(application) {
 
@@ -58,7 +64,8 @@ class HomeScreenViewModel(
         private set
 
     private var latestPrompt: String? = null
-    private var latestGeneratedImage: String? = null
+    private var latestGeneratedImage: ByteArray? = null
+
     private val _decodedBitmap = MutableStateFlow<Bitmap?>(null)
     val decodedBitmap: StateFlow<Bitmap?> = _decodedBitmap
 
@@ -85,23 +92,29 @@ class HomeScreenViewModel(
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun generateImageFromText(prompt: String, negativePrompt : String? = null) {
         viewModelScope.launch{
-            homeScreenUiState = HomeScreenUiState.Loading // Update state to loading
+            homeScreenUiState = HomeScreenUiState.Loading
             homeScreenUiState = try {
                 val response = withContext(Dispatchers.IO) {
-                    stableDiffusionRepository.generateImageFromText(
-                        prompt = prompt, negativePrompt = negativePrompt
+                    modelsRepository.GenerateImageFromText(
+                        url = getAIModelUrl(),
+                        prompt = prompt,
+                        negativePrompt = negativePrompt
                     )
                 }
+                val bytes = response.bytes()
                 latestPrompt = prompt
-                latestGeneratedImage = response.image
-                HomeScreenUiState.Success(response.image)
+                latestGeneratedImage = bytes
+                bytes.let { HomeScreenUiState.Success(it) }
             }catch (e: IOException) {
+                Log.d("error:",  e.toString())
                 HomeScreenUiState.Error("Incorrect Parameters bro ")
             } catch (e: retrofit2.HttpException) {
                 if(e.code() == 402) {
-                    HomeScreenUiState.Error("Payment required. Please update your subscription.")
+                    Log.d("error:",  e.toString())
+                    HomeScreenUiState.Error("Payment required.\nPlease update your subscription.")
                 }
                 else {
+                    Log.d("error:",  e.toString())
                     HomeScreenUiState.Error("Network Issues, try again")
                 }
             }
@@ -113,13 +126,14 @@ class HomeScreenViewModel(
             homeScreenUiState = HomeScreenUiState.Loading
             homeScreenUiState = try {
                 val response = withContext(Dispatchers.IO) {
-                    stableDiffusionRepository.generateImageFromImage(
+                    modelsRepository.sdGenerateImageFromImage(
                         prompt = prompt, negativePrompt = negativePrompt, image = imagePart
                     )
                 }
+                val bytes = response.body()?.bytes()
                 latestPrompt = prompt
-                latestGeneratedImage = response.image
-                HomeScreenUiState.Success(response.image)
+                latestGeneratedImage = bytes
+                bytes?.let { HomeScreenUiState.Success(it) } ?: HomeScreenUiState.Error("An error occurred")
             } catch (e: retrofit2.HttpException) {
                 HomeScreenUiState.Error(
                     when (e.code()) {
@@ -136,26 +150,25 @@ class HomeScreenViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun savePhotoToCollection() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val prompt = latestPrompt
-            val base64 = latestGeneratedImage
-            if(prompt != null && base64 != null) {
-                viewModelScope.launch {
-                    val savedPhoto = SavedPhoto(
-                        prompt = prompt,
-                        base64FilePath = saveImageToStorage(context = getApplication(), bitmap = convertBase64ToBitmap(base64), prompt = prompt),
-                        date = displayDate(),
-                        id = 0
-                    )
-                    savedPhotosRepository.insertSavedPhoto(savedPhoto)
-                }
+        val prompt = latestPrompt
+        val raw = latestGeneratedImage
+        if(prompt != null && raw != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val savedPhoto = SavedPhoto(
+                    prompt = prompt,
+                    filePath = saveImageToStorage(context = getApplication(), bitmap = convertRAWToBitmap(raw), prompt = prompt),
+                    model = getAIModelName(),
+                    date = displayDate(),
+                    id = 0
+                )
+                savedPhotosRepository.insertSavedPhoto(savedPhoto)
             }
         }
     }
 
-    fun saveImageToGallery(bitmapString: String) {
+    fun saveImageToGallery(raw: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = convertBase64ToBitmap(bitmapString)
+            val bitmap = convertRAWToBitmap(raw)
             imageRepository.saveImageToGallery(bitmap)
         }
     }
@@ -168,7 +181,8 @@ class HomeScreenViewModel(
             }
             val file = File(directory, "${prompt}_${System.currentTimeMillis()}.jpg")
             FileOutputStream(file).use { out ->
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                val bmp = bitmap ?: throw IllegalArgumentException("Bitmap conversion failed")
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, out)
             }
             file.absolutePath
         }
@@ -179,8 +193,7 @@ class HomeScreenViewModel(
         val inputStream = contentResolver.openInputStream(uri) ?: throw IllegalStateException("Cannot open input stream")
         val fileName = "upload_${System.currentTimeMillis()}.png"
 
-        val requestBody = inputStream.readBytes()
-            .toRequestBody("image/*".toMediaTypeOrNull())
+        val requestBody = inputStream.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
 
         return MultipartBody.Part.createFormData(
             "image",
@@ -190,18 +203,34 @@ class HomeScreenViewModel(
     }
 
 
-    private suspend fun convertBase64ToBitmap(base64String: String): Bitmap? = withContext(Dispatchers.Default) {
+    private suspend fun convertRAWToBitmap(imageBytes: ByteArray): Bitmap? = withContext(Dispatchers.Default) {
         try {
-            val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         } catch (e: IllegalArgumentException) {
+            Log.d("error:",  e.toString())
             null
         }
     }
 
-    fun decodeImage(image: String) {
+    private fun getAIModel(): AIModel {
+        return when (aiModelState.value.aiModel) {
+            0 -> AIModel.STABLE_DIFFUSION
+            1 -> AIModel.BLACK_FOREST_FLUX
+            else -> AIModel.STABLE_DIFFUSION
+        }
+    }
+
+    private fun getAIModelUrl() :String {
+        return getAIModel().postUrl
+    }
+
+    private fun getAIModelName() :String {
+        return getAIModel().displayName
+    }
+
+    fun decodeImage(raw: ByteArray) {
         viewModelScope.launch(Dispatchers.Default) {
-            val bitmap = convertBase64ToBitmap(image)
+            val bitmap = convertRAWToBitmap(raw)
             _decodedBitmap.value = bitmap
         }
     }
@@ -227,15 +256,33 @@ class HomeScreenViewModel(
         }
     }
 
+    val aiModelState: StateFlow<AiModelUiState> =
+        userPreferencesRepository.aiModel.map { ai_model ->
+            AiModelUiState(ai_model)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = runBlocking {
+                AiModelUiState(
+                    aiModel = userPreferencesRepository.aiModel.first()
+                )
+            }
+        )
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as AvatrApplication)
-                val stableDiffusionRepository = application.container.stableDiffusionRepository
+                val modelsRepository = application.container.modelsRepository
                 val savedPhotosRepository = application.container.savedPhotoRepository
                 val imageRepository = application.container.imageRepository
-                HomeScreenViewModel(stableDiffusionRepository = stableDiffusionRepository, imageRepository = imageRepository, savedPhotosRepository = savedPhotosRepository, application = application)
+                val userPreferencesRepository = application.userPreferencesRepository
+                HomeScreenViewModel(modelsRepository = modelsRepository, imageRepository = imageRepository, savedPhotosRepository = savedPhotosRepository, userPreferencesRepository = userPreferencesRepository, application = application)
             }
         }
     }
 }
+
+data class AiModelUiState(
+    val aiModel: Int = 0,
+)

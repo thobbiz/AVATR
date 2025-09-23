@@ -2,7 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20"
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
     alias(libs.plugins.google.gms.google.services)
@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.example.avatr"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.avatr"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -27,7 +27,8 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
 
-        buildConfigField ("String", "API_KEY", properties.getProperty("API_KEY"))
+        buildConfigField ("String", "SD_KEY", properties.getProperty("SD_KEY"))
+        buildConfigField ("String", "HF_TOKEN", properties.getProperty("HF_TOKEN"))
     }
 
     buildFeatures{
@@ -46,11 +47,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -99,6 +100,10 @@ dependencies {
     //JUnit and Espresso
     androidTestImplementation(libs.androidx.espresso.core.v351)
     androidTestImplementation(libs.androidx.junit.v130)
+
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
+
 
     // Import the BoM for the Firebase platform
     implementation(platform(libs.firebase.bom))
